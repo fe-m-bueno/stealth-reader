@@ -1,0 +1,33 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-vscode-bg: #1e1e1e;
+  --color-vscode-sidebar: #252526;
+  --color-vscode-activityBar: #333333;
+  --color-vscode-statusBar: #007acc;
+  --color-vscode-text: #d4d4d4;
+  --color-vscode-selection: #264f78;
+  
+  /* Syntax colors */
+  --color-vscode-keyword: #c586c0;      /* purple - const, let, if, for, try, catch */
+  --color-vscode-function: #dcdcaa;     /* yellow - function names */
+  --color-vscode-string: #ce9178;       /* orange - strings */
+  --color-vscode-comment: #6a9955;      /* green - comments */
+  --color-vscode-variable: #9cdcfe;     /* light blue - variables */
+  --color-vscode-class: #4ec9b0;        /* cyan - classes, types */
+  --color-vscode-number: #b5cea8;       /* light green - numbers */
+  --color-vscode-property: #d4d4d4;     /* white - properties */
+  --color-vscode-control: #c586c0;      /* purple - return, await, async */
+  --color-vscode-bracket-1: #ffd700;    /* gold - () */
+  --color-vscode-bracket-2: #da70d6;    /* orchid - [] */
+  --color-vscode-bracket-3: #179fff;    /* blue - {} */
+  
+  --font-family-mono: 'Consolas', 'Courier New', monospace;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
