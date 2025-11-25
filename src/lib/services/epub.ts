@@ -50,18 +50,29 @@ export class EpubService {
     const chapterIndex = spineItems.findIndex((item) => item.href === href);
 
     if (chapterIndex === -1) {
-      // Fallback to original method if href not found in spine
+      // Fallback: just get the text for this specific href
       return this.getSingleFileText(href);
     }
 
-    // Determine the range of files for this chapter
-    const startIndex = chapterIndex;
-    const endIndex = this.findNextChapterIndex(spineItems, startIndex);
+    // Try to find the next chapter based on TOC
+    const chapters = await this.getChapters();
+    let endIndex = spineItems.length; // Default to end of book
 
-    // Extract text from all files in this chapter range
+    for (let i = chapterIndex + 1; i < spineItems.length; i++) {
+      const spineItem = spineItems[i];
+      // Check if this spine item matches a chapter href
+      const isChapterStart = chapters.some(
+        (chapter) => chapter.href === spineItem.href
+      );
+      if (isChapterStart) {
+        endIndex = i;
+        break;
+      }
+    }
+
+    // Extract text from this chapter's files
     const chapterTexts: string[] = [];
-
-    for (let i = startIndex; i < endIndex; i++) {
+    for (let i = chapterIndex; i < endIndex; i++) {
       const text = await this.getSingleFileText(spineItems[i].href);
       if (text.trim()) {
         chapterTexts.push(text);
@@ -100,14 +111,13 @@ export class EpubService {
     }
   }
 
-  private findNextChapterIndex(
+  private async findChapterEndIndex(
     spineItems: Array<{ href: string; id: string }>,
     startIndex: number
-  ): number {
-    // Get chapters to find the next chapter start
-    // This is a simple heuristic: find the next item that likely starts a new chapter
+  ): Promise<number> {
     const chapters = this.getCachedChapters();
 
+    // First, try to find the next chapter based on TOC
     for (let i = startIndex + 1; i < spineItems.length; i++) {
       const spineItem = spineItems[i];
       // Check if this spine item matches a chapter href
@@ -119,8 +129,69 @@ export class EpubService {
       }
     }
 
-    // If no next chapter found, include all remaining items
-    return spineItems.length;
+    // If TOC doesn't help, analyze content to find natural chapter boundaries
+    // Start analyzing from the current chapter file to accumulate content
+    let totalContentLength = 0;
+    const maxContentLength = 1; // Force exactly 1 file per chapter to prevent duplication
+    const maxAdditionalFiles = 3; // Maximum additional files beyond the starting one
+
+    // Always include at least the starting file
+    try {
+      const startFileText = await this.getSingleFileText(
+        spineItems[startIndex].href
+      );
+      totalContentLength += startFileText.length;
+    } catch (e) {
+      return startIndex + 1; // Just include the start file
+    }
+
+    // Now check additional files
+    for (
+      let i = startIndex + 1;
+      i < Math.min(startIndex + 1 + maxAdditionalFiles, spineItems.length);
+      i++
+    ) {
+      try {
+        const text = await this.getSingleFileText(spineItems[i].href);
+
+        // Check if this file looks like a chapter start
+        if (this.looksLikeChapterStart(text.trim())) {
+          return i; // Stop before this file
+        }
+
+        // Add this file to the chapter
+        totalContentLength += text.length;
+
+        // If we've accumulated too much content, stop after this file
+        if (totalContentLength > maxContentLength) {
+          return i + 1;
+        }
+      } catch (e) {
+        return i; // Stop before the problematic file
+      }
+    }
+
+    // Definitive solution: each chapter gets exactly 1 file
+    return startIndex + 1;
+  }
+
+  private looksLikeChapterStart(text: string): boolean {
+    if (!text || text.length < 10) return false;
+
+    const firstLine = text.split("\n")[0].trim();
+
+    // Look for chapter-like patterns
+    const chapterPatterns = [
+      /^\d+\s*[.:-]*\s*[A-Z]/, // "1. Chapter" or "1: Chapter" or "1 - Chapter"
+      /^[IVXLCDM]+\s*[.:-]*\s*[A-Z]/i, // Roman numerals "I. Chapter"
+      /^Capítulo\s+\d+/i, // "Capítulo 1"
+      /^Chapter\s+\d+/i, // "Chapter 1"
+      /^Parte\s+\d+/i, // "Parte 1"
+      /^Part\s+\d+/i, // "Part 1"
+      /^[A-Z][A-Z\s]{10,}$/, // ALL CAPS titles longer than 10 chars
+    ];
+
+    return chapterPatterns.some((pattern) => pattern.test(firstLine));
   }
 
   private getCachedChapters(): Chapter[] {
@@ -239,42 +310,16 @@ export class EpubService {
     const scripts = doc.querySelectorAll("script, style");
     scripts.forEach((script) => script.remove());
 
-    // Try to extract text by paragraphs to preserve structure
-    const paragraphs = doc.querySelectorAll("p, div, h1, h2, h3, h4, h5, h6");
-    const textParts: string[] = [];
+    // Simple direct text extraction
+    const body = doc.body || doc.documentElement;
+    const text = body.textContent || body.innerText || "";
 
-    for (const para of paragraphs) {
-      const text = para.textContent?.trim();
-      if (text && text.length > 10) {
-        // Only include substantial paragraphs
-        textParts.push(text);
-      }
-    }
-
-    // If no paragraphs found, fall back to body text
-    if (textParts.length === 0) {
-      const body = doc.body || doc.documentElement;
-      let text = body.textContent || body.innerText || "";
-
-      text = text
-        // Normalize line breaks
-        .replace(/\r\n/g, "\n")
-        .replace(/\r/g, "\n")
-        // Clean up multiple spaces and tabs
-        .replace(/[ \t]+/g, " ")
-        // Normalize paragraph breaks
-        .replace(/\n\s*\n\s*/g, "\n\n")
-        // Remove leading/trailing whitespace from each line and filter empty lines
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0)
-        .join("\n");
-
-      return text.trim();
-    }
-
-    // Join paragraphs with triple newlines to clearly separate them
-    return textParts.join("\n\n\n");
+    // Minimal cleanup
+    return text
+      .replace(/\r\n/g, "\n")
+      .replace(/\r/g, "\n")
+      .replace(/[ \t]+/g, " ")
+      .trim();
   }
 }
 
