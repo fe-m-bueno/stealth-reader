@@ -79,7 +79,7 @@ export class EpubService {
       }
     }
 
-    return chapterTexts.join("\n\n");
+    return chapterTexts.join(" ");
   }
 
   private async getSpineItems(): Promise<Array<{ href: string; id: string }>> {
