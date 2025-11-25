@@ -6,7 +6,7 @@ export interface CodeLineData {
 export class Codeifier {
   private lineNumber = 1;
   // Cache regex patterns for better performance
-  private static readonly PARAGRAPH_SPLIT = /\n\s*\n\s*\n/;
+  private static readonly PARAGRAPH_SPLIT = /\n\s*\n/;
   private static readonly WORD_SPLIT = /\s+/;
   private static readonly SENTENCE_SPLIT = /[^.!?]+[.!?]+/g;
   private static readonly QUOTE_START = /^[""]/;
@@ -443,7 +443,7 @@ export class Codeifier {
 
     lines.push({
       ln: this.lineNumber++,
-      content: `    <span class="text-vscode-keyword">const</span> <span class="text-vscode-variable">result</span> = <span class="text-vscode-keyword">await</span> <span class="text-vscode-function">fetchData</span><span class="text-vscode-bracket-1">()</span>;`,
+      content: `    <span class="text-vscode-keyword">const</span> <span class="text-vscode-variable">result</span> = <span class="text-vscode-string">\`${escaped}\`</span>;`,
     });
 
     // Split long text across multiple return statements if needed
@@ -535,17 +535,12 @@ export class Codeifier {
 
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-vscode-function">fetchData</span><span class="text-vscode-bracket-1">()</span>`,
+      content: `<span class="text-vscode-function">processData</span><span class="text-vscode-bracket-1">()</span>`,
     });
 
     lines.push({
       ln: this.lineNumber++,
-      content: `  .<span class="text-vscode-function">then</span><span class="text-vscode-bracket-1">(</span><span class="text-vscode-variable">response</span> <span class="text-vscode-operator">=></span> <span class="text-vscode-variable">response</span>.<span class="text-vscode-function">json</span><span class="text-vscode-bracket-1">()</span><span class="text-vscode-bracket-1">)</span>`,
-    });
-
-    lines.push({
-      ln: this.lineNumber++,
-      content: `  .<span class="text-vscode-function">then</span><span class="text-vscode-bracket-1">(</span><span class="text-vscode-variable">data</span> <span class="text-vscode-operator">=></span> <span class="text-vscode-string">\`${escaped}\`</span><span class="text-vscode-bracket-1">)</span>`,
+      content: `  .<span class="text-vscode-function">then</span><span class="text-vscode-bracket-1">(</span><span class="text-vscode-variable">result</span> <span class="text-vscode-operator">=></span> <span class="text-vscode-string">\`${escaped}\`</span><span class="text-vscode-bracket-1">)</span>`,
     });
 
     lines.push({
