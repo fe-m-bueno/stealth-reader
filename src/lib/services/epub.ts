@@ -45,41 +45,57 @@ export class EpubService {
   async getChapterText(href: string): Promise<string> {
     if (!this.book) return "";
 
-    // Get all spine items to determine chapter boundaries
-    const spineItems = await this.getSpineItems();
-    const chapterIndex = spineItems.findIndex((item) => item.href === href);
+    try {
+      // Get all spine items to determine chapter boundaries
+      const spineItems = await this.getSpineItems();
+      const chapterIndex = spineItems.findIndex((item) => item.href === href);
 
-    if (chapterIndex === -1) {
-      // Fallback: just get the text for this specific href
-      return this.getSingleFileText(href);
-    }
+      if (chapterIndex === -1) {
+        // Fallback: just get the text for this specific href
+        return await this.getSingleFileText(href);
+      }
 
-    // Try to find the next chapter based on TOC
-    const chapters = await this.getChapters();
-    let endIndex = spineItems.length; // Default to end of book
+      // Try to find the next chapter based on TOC
+      const chapters = await this.getChapters();
+      let endIndex = spineItems.length; // Default to end of book
 
-    for (let i = chapterIndex + 1; i < spineItems.length; i++) {
-      const spineItem = spineItems[i];
-      // Check if this spine item matches a chapter href
-      const isChapterStart = chapters.some(
-        (chapter) => chapter.href === spineItem.href
-      );
-      if (isChapterStart) {
-        endIndex = i;
-        break;
+      for (let i = chapterIndex + 1; i < spineItems.length; i++) {
+        const spineItem = spineItems[i];
+        // Check if this spine item matches a chapter href
+        const isChapterStart = chapters.some(
+          (chapter) => chapter.href === spineItem.href
+        );
+        if (isChapterStart) {
+          endIndex = i;
+          break;
+        }
+      }
+
+      // Extract text from this chapter's files
+      const chapterTexts: string[] = [];
+      for (let i = chapterIndex; i < endIndex; i++) {
+        try {
+          const text = await this.getSingleFileText(spineItems[i].href);
+          if (text.trim()) {
+            chapterTexts.push(text);
+          }
+        } catch (e) {
+          console.warn(`Failed to get text for spine item ${i}:`, e);
+          // Continue with other files
+        }
+      }
+
+      return chapterTexts.join(" ");
+    } catch (e) {
+      console.error("Failed to get chapter text:", e);
+      // Fallback to single file extraction
+      try {
+        return await this.getSingleFileText(href);
+      } catch (fallbackError) {
+        console.error("Fallback also failed:", fallbackError);
+        return "";
       }
     }
-
-    // Extract text from this chapter's files
-    const chapterTexts: string[] = [];
-    for (let i = chapterIndex; i < endIndex; i++) {
-      const text = await this.getSingleFileText(spineItems[i].href);
-      if (text.trim()) {
-        chapterTexts.push(text);
-      }
-    }
-
-    return chapterTexts.join(" ");
   }
 
   private async getSpineItems(): Promise<Array<{ href: string; id: string }>> {
@@ -306,20 +322,37 @@ export class EpubService {
   }
 
   private extractTextContent(doc: Document): string {
-    // Remove script and style elements
-    const scripts = doc.querySelectorAll("script, style");
+    // Remove script elements
+    const scripts = doc.querySelectorAll("script");
     scripts.forEach((script) => script.remove());
 
-    // Simple direct text extraction
-    const body = doc.body || doc.documentElement;
-    const text = body.textContent || body.innerText || "";
+    // Process images - convert to text representation with src info
+    const images = doc.querySelectorAll("img");
+    images.forEach((img) => {
+      const src = img.getAttribute("src") || img.getAttribute("data-src") || "";
+      const alt = img.getAttribute("alt") || "Imagem";
+      const title = img.getAttribute("title") || alt;
 
-    // Minimal cleanup
-    return text
+      // Create a placeholder that includes both description and src
+      const placeholder = `\n[IMAGEM:${src ? `|${src}` : ""}|${title || alt}]`;
+      img.replaceWith(placeholder);
+    });
+
+    // Keep style elements for now (they might be needed for layout)
+
+    // Extract text content preserving some structure
+    const body = doc.body || doc.documentElement;
+    let text = body.textContent || body.innerText || "";
+
+    // Clean up whitespace but preserve paragraph breaks
+    text = text
       .replace(/\r\n/g, "\n")
       .replace(/\r/g, "\n")
       .replace(/[ \t]+/g, " ")
+      .replace(/\n\s*\n/g, "\n\n")
       .trim();
+
+    return text;
   }
 }
 

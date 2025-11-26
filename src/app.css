@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @theme {
   --color-vscode-bg: #1e1e1e;
@@ -7,29 +7,60 @@
   --color-vscode-statusBar: #007acc;
   --color-vscode-text: #d4d4d4;
   --color-vscode-selection: #264f78;
-  
+
   /* Syntax colors - VSCode Dark Theme */
-  --color-vscode-keyword: #569cd6;      /* blue - const, let, if, for, try, catch */
-  --color-vscode-function: #dcdcaa;     /* yellow - function names */
-  --color-vscode-string: #ce9178;       /* orange - strings */
-  --color-vscode-comment: #6a9955;      /* green - comments */
-  --color-vscode-variable: #9cdcfe;     /* light blue - variables */
-  --color-vscode-type: #4ec9b0;         /* cyan - types, interfaces, classes */
-  --color-vscode-class: #4ec9b0;        /* cyan - classes, types */
-  --color-vscode-number: #b5cea8;       /* light green - numbers */
-  --color-vscode-property: #9cdcfe;     /* light blue - properties */
-  --color-vscode-control: #c586c0;      /* purple - return, await, async */
-  --color-vscode-operator: #d4d4d4;     /* white - operators like =>, ., etc */
-  --color-vscode-bracket-1: #ffd700;    /* gold - () */
-  --color-vscode-bracket-2: #da70d6;    /* orchid - [] */
-  --color-vscode-bracket-3: #ffd700;    /* gold - {} */
-  
-  --font-family-mono: 'Consolas', 'Courier New', monospace;
+  --color-vscode-keyword: #569cd6; /* blue - const, let, if, for, try, catch */
+  --color-vscode-function: #dcdcaa; /* yellow - function names */
+  --color-vscode-string: #ce9178; /* orange - strings */
+  --color-vscode-comment: #6a9955; /* green - comments */
+  --color-vscode-variable: #9cdcfe; /* light blue - variables */
+  --color-vscode-type: #4ec9b0; /* cyan - types, interfaces, classes */
+  --color-vscode-class: #4ec9b0; /* cyan - classes, types */
+  --color-vscode-number: #b5cea8; /* light green - numbers */
+  --color-vscode-property: #9cdcfe; /* light blue - properties */
+  --color-vscode-control: #c586c0; /* purple - return, await, async */
+  --color-vscode-operator: #d4d4d4; /* white - operators like =>, ., etc */
+  --color-vscode-bracket-1: #ffd700; /* gold - () */
+  --color-vscode-bracket-2: #da70d6; /* orchid - [] */
+  --color-vscode-bracket-3: #ffd700; /* gold - {} */
+
+  --font-family-mono: "Consolas", "Courier New", monospace;
 }
 
 body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* EPUB Image Styles */
+.epub-image-container {
+  margin: 15px 0;
+  padding: 12px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #2d2d30;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.epub-image-container img {
+  max-width: 100%;
+  height: auto;
+  max-height: 600px;
+  border-radius: 4px;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+/* Scrollbar hide utility */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }

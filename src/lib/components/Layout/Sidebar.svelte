@@ -17,6 +17,9 @@
     fileInput.click();
   }
 
+  // Expose function for external access
+  export { triggerFileSelect };
+
   function handleDeleteBook(bookId: string, e: Event) {
     e.stopPropagation();
     if (confirm('Delete this book?')) {
@@ -50,10 +53,10 @@
       <div class="p-2">
         <div class="text-xs text-vscode-text/60 mb-2 px-2">All Books ({bookStore.availableBooks.length})</div>
         {#each bookStore.availableBooks as book}
-          <div 
+          <div
             class="flex items-center justify-between px-2 py-1.5 cursor-pointer hover:bg-[#2a2d2e] rounded group {bookStore.currentBookId === book.id ? 'bg-[#37373d]' : ''}"
-            onclick={() => { bookStore.loadBookFromStorage(book.id); showAllBooks = false; }}
-            onkeydown={(e) => e.key === 'Enter' && bookStore.loadBookFromStorage(book.id)}
+            onclick={() => { bookStore.createSessionFromBook(book.id); showAllBooks = false; }}
+            onkeydown={(e) => e.key === 'Enter' && bookStore.createSessionFromBook(book.id)}
             role="button"
             tabindex="0"
           >
@@ -77,11 +80,13 @@
     {:else if !bookStore.bookLoaded}
       <div class="p-4 text-center mt-10">
         <div class="text-xs text-vscode-text/70 mb-4">You have not yet opened a folder.</div>
-        <button 
-          class="bg-vscode-selection text-white px-4 py-1.5 rounded-sm text-xs hover:bg-blue-600 transition-colors w-full"
+        <button
+          class="bg-vscode-selection text-white px-4 py-1.5 rounded-sm text-xs hover:bg-blue-600 transition-colors w-full flex items-center justify-center gap-2"
           onclick={triggerFileSelect}
+          title="Open EPUB file (Ctrl+Shift+O)"
         >
-          Open Folder
+          <span>Open Folder</span>
+          <span class="opacity-50 text-[10px]">Ctrl+Shift+O</span>
         </button>
       </div>
     {:else}

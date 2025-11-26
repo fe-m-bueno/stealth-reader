@@ -2,6 +2,12 @@
   import { Square, Minus, X, Check } from 'lucide-svelte';
   import { bookStore } from '../../stores/book.svelte';
 
+  interface Props {
+    handleUploadShortcut?: () => void;
+  }
+
+  let { handleUploadShortcut }: Props = $props();
+
   let activeMenu = $state<string | null>(null);
 
   function toggleMenu(menu: string) {

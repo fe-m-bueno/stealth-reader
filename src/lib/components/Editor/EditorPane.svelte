@@ -1,57 +1,53 @@
 <script lang="ts">
   import Tabs from './Tabs.svelte';
-  import CodeLine from './CodeLine.svelte';
+  import ReadingPanel from './ReadingPanel.svelte';
   import { bookStore } from '../../stores/book.svelte';
-  import { Loader2 } from 'lucide-svelte';
 
-  let scrollContainer: HTMLDivElement;
+  function handleScroll(sessionId: string, progress: number) {
+    bookStore.updateScrollProgressForSession(sessionId, progress);
+  }
 
-  $effect(() => {
-    // Auto scroll to top when chapter changes
-    if (bookStore.currentChapter) {
-      if (scrollContainer) scrollContainer.scrollTop = 0;
-    }
-  });
-
-  function handleScroll(e: Event) {
-    const target = e.target as HTMLDivElement;
-    const scrollTop = target.scrollTop;
-    const scrollHeight = target.scrollHeight;
-    const clientHeight = target.clientHeight;
-    
-    if (scrollHeight > clientHeight) {
-      const progress = scrollTop / (scrollHeight - clientHeight);
-      bookStore.updateScrollProgress(progress);
-    }
+  function getSessionById(sessionId: string | null) {
+    return sessionId ? bookStore.readingSessions.find(s => s.id === sessionId) || null : null;
   }
 </script>
 
-<div class="flex flex-col h-full bg-vscode-bg w-full">
+<div class="flex flex-col h-full bg-vscode-bg w-full overflow-hidden">
   <Tabs />
-  
-  <div 
-    bind:this={scrollContainer}
-    class="flex-1 overflow-y-auto overflow-x-hidden py-2 editor-scroll-container relative" 
-    onscroll={handleScroll}
-  >
-    {#if bookStore.isLoading}
-      <div class="absolute inset-0 flex items-center justify-center bg-vscode-bg/50 z-10">
-        <Loader2 class="animate-spin text-vscode-text" size={32} />
-      </div>
-    {/if}
 
-    {#if bookStore.currentCode.length === 0 && !bookStore.isLoading}
-      <div class="flex items-center justify-center h-full text-vscode-text/30 select-none">
+  {#if bookStore.isSplitView && bookStore.leftSessionId && bookStore.rightSessionId}
+    <!-- Split view -->
+    <div class="flex flex-1 overflow-hidden min-h-0">
+      <div class="flex-1 border-r border-[#3c3c3c] overflow-hidden">
+        <ReadingPanel
+          session={getSessionById(bookStore.leftSessionId)!}
+          onScroll={(progress) => handleScroll(bookStore.leftSessionId!, progress)}
+        />
+      </div>
+      <div class="flex-1 overflow-hidden">
+        <ReadingPanel
+          session={getSessionById(bookStore.rightSessionId)!}
+          onScroll={(progress) => handleScroll(bookStore.rightSessionId!, progress)}
+        />
+      </div>
+    </div>
+  {:else}
+    <!-- Single view -->
+    {#if bookStore.sessionsCount === 0}
+      <div class="flex items-center justify-center flex-1 text-vscode-text/30 select-none">
         <div class="text-center">
-          <div class="text-6xl mb-4 opacity-20">CMD + SHIFT + P</div>
-          <div>Open a file to start reading</div>
+          <div class="text-6xl mb-4 opacity-20">📖</div>
+          <div>Open a book to start reading</div>
         </div>
       </div>
     {:else}
-      {#each bookStore.currentCode as line}
-        <CodeLine lineNumber={line.ln} content={line.content} />
-      {/each}
+      <div class="flex-1 overflow-hidden min-h-0">
+        <ReadingPanel
+          session={bookStore.readingSessions.find(s => s.id === bookStore.activeSessionId)!}
+          onScroll={(progress) => handleScroll(bookStore.activeSessionId!, progress)}
+        />
+      </div>
     {/if}
-  </div>
+  {/if}
 </div>
 

@@ -24,47 +24,46 @@
     </div>
   </div>
 
-  <div class="flex items-center gap-4 h-full">
-    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer">
+  <div class="flex items-center gap-2 h-full overflow-x-auto scrollbar-hide">
+    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer flex-shrink-0">
       Ln 12, Col 45
     </div>
-    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer">
+    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer flex-shrink-0">
       Spaces: 2
     </div>
-    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer">
+    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer flex-shrink-0">
       UTF-8
     </div>
-    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer">
+    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer flex-shrink-0">
       LF
     </div>
-    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer">
+    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer flex-shrink-0">
       <span class="mr-1">{`{ }`}</span> TypeScript
     </div>
-    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer">
+    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer flex-shrink-0">
       <Radio size={12} class="mr-1" />
       <span>Go Live</span>
     </div>
-    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer">
+    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer flex-shrink-0">
       <Check size={12} />
       <span class="ml-1">Prettier</span>
     </div>
     
-    <!-- Chapter Progress -->
-    {#if bookStore.bookLoaded && bookStore.currentChapter}
-      <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer border-l border-white/20">
-        <BookOpen size={12} class="mr-1" />
-        <span>Ch: {bookStore.chapterScrollProgress}%</span>
-      </div>
+    <!-- Progress for each session -->
+    {#if bookStore.sessionsCount > 0}
+      {#each bookStore.readingSessions as session (session.id)}
+        <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer border-l border-white/20 flex-shrink-0" title={session.bookTitle}>
+          <BookOpen size={12} class="mr-1 flex-shrink-0" />
+          <span class="text-xs truncate max-w-[80px]">
+            {session.currentChapter ? session.currentChapter.label : session.bookTitle}
+          </span>
+          <span class="ml-1 text-xs">Ch:{bookStore.getSessionChapterProgress(session.id)}%</span>
+          <span class="ml-1 text-xs">Bk:{bookStore.getSessionBookProgress(session.id)}%</span>
+        </div>
+      {/each}
     {/if}
     
-    <!-- Overall Book Progress -->
-    {#if bookStore.bookLoaded}
-      <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer">
-        <span>Book: {bookStore.overallBookProgress}%</span>
-      </div>
-    {/if}
-    
-    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer">
+    <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer flex-shrink-0">
       <AlertCircle size={12} />
     </div>
   </div>

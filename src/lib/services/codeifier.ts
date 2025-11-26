@@ -22,20 +22,38 @@ export class Codeifier {
 
   transform(text: string): CodeLineData[] {
     const lines: CodeLineData[] = [];
-    const paragraphs = text
-      .split(Codeifier.PARAGRAPH_SPLIT)
-      .filter((p) => p.trim().length > 0);
 
-    for (const p of paragraphs) {
-      // For each paragraph, create multiple code structures if it's very long
-      // This ensures all content gets used
-      const chunks = this.splitParagraphIntoCodeBlocks(p);
+    // First, handle any images in the text
+    const imageRegex = /\[IMAGEM:([^\]]+)\]/g;
+    const parts = text.split(imageRegex);
 
-      for (const chunk of chunks) {
-        const transformed = this.processParagraph(chunk);
-        lines.push(...transformed);
-        // Add an empty line after each block for readability
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+
+      if (i % 2 === 1) {
+        // This is an image placeholder (odd indices after split)
+        const imageDesc = part.trim();
+        const imageLines = this.createImageElement(imageDesc);
+        lines.push(...imageLines);
         lines.push({ ln: this.lineNumber++, content: "" });
+      } else if (part.trim()) {
+        // This is regular text
+        const paragraphs = part
+          .split(Codeifier.PARAGRAPH_SPLIT)
+          .filter((p) => p.trim().length > 0);
+
+        for (const p of paragraphs) {
+          // For each paragraph, create multiple code structures if it's very long
+          // This ensures all content gets used
+          const chunks = this.splitParagraphIntoCodeBlocks(p);
+
+          for (const chunk of chunks) {
+            const transformed = this.processParagraph(chunk);
+            lines.push(...transformed);
+            // Add an empty line after each block for readability
+            lines.push({ ln: this.lineNumber++, content: "" });
+          }
+        }
       }
     }
 
@@ -79,7 +97,54 @@ export class Codeifier {
       chunks.push(text.trim());
     }
 
+    // Verify we didn't lose any content
+    const trimmed = text.trim();
+    const totalChunkLength = chunks.reduce(
+      (sum, chunk) => sum + chunk.length,
+      0
+    );
+    if (totalChunkLength < trimmed.length * 0.9) {
+      // If we lost more than 10% of content, return the original text
+      console.warn("Potential content loss detected, using original text");
+      return [trimmed];
+    }
+
     return chunks.filter((chunk) => chunk.length > 0);
+  }
+
+  private createImageElement(imageDesc: string): CodeLineData[] {
+    const lines: CodeLineData[] = [];
+
+    // Parse the image description: [IMAGEM:|src|alt]
+    const parts = imageDesc.split("|");
+    const src = parts[1] || "";
+    const alt = parts[2] || "Imagem";
+
+    // Create a comment showing the image
+    lines.push({
+      ln: this.lineNumber++,
+      content: `<span class="text-vscode-comment">// 🖼️ ${alt}</span>`,
+    });
+
+    if (src) {
+      // Try to render the actual image inline in the code at original size
+      lines.push({
+        ln: this.lineNumber++,
+        content: `<div class="epub-image-container" style="text-align: center; margin: 10px 0; padding: 10px; border: 1px solid #555; border-radius: 4px; background: #2d2d30;"><img src="${src}" alt="${this.escapeString(
+          alt
+        )}" style="max-width: 100%; height: auto; border-radius: 4px; display: block; object-fit: contain;" onerror="this.style.display='none';" onload="this.parentElement.style.borderColor='#4ec9b0';" /></div>`,
+      });
+    } else {
+      // Fallback: just show the alt text
+      lines.push({
+        ln: this.lineNumber++,
+        content: `<span class="text-vscode-keyword">const</span> <span class="text-vscode-variable">imagePlaceholder</span> = <span class="text-vscode-string">"${this.escapeString(
+          alt
+        )}"</span>;`,
+      });
+    }
+
+    return lines;
   }
 
   private processParagraph(text: string): CodeLineData[] {
@@ -292,12 +357,21 @@ export class Codeifier {
 
   private toTypeAlias(text: string): CodeLineData[] {
     const typeName = this.generateTypeName(text);
-    return [
-      {
-        ln: this.lineNumber++,
-        content: `<span class="text-vscode-keyword">type</span> <span class="text-vscode-type">${typeName}</span> = <span class="text-vscode-keyword">string</span>;`,
-      },
-    ];
+    const escaped = this.escapeString(text);
+    const lines: CodeLineData[] = [];
+
+    lines.push({
+      ln: this.lineNumber++,
+      content: `<span class="text-vscode-keyword">type</span> <span class="text-vscode-type">${typeName}</span> = <span class="text-vscode-keyword">string</span>;`,
+    });
+
+    // Add comment with full text to preserve content
+    lines.push({
+      ln: this.lineNumber++,
+      content: `<span class="text-vscode-comment">// ${escaped}</span>`,
+    });
+
+    return lines;
   }
 
   private toFunctionCall(text: string): CodeLineData[] {
@@ -359,16 +433,12 @@ export class Codeifier {
       content: `<span class="text-vscode-bracket-3">}</span>`,
     });
 
-    // Add comment with remaining text to preserve content
-    const remainingText = text.split(/\s+/).slice(4).join(" ");
-    if (remainingText.trim()) {
-      lines.push({
-        ln: this.lineNumber++,
-        content: `<span class="text-vscode-comment">// ${this.escapeString(
-          remainingText
-        )}</span>`,
-      });
-    }
+    // Add comment with FULL text to preserve all content
+    const escaped = this.escapeString(text);
+    lines.push({
+      ln: this.lineNumber++,
+      content: `<span class="text-vscode-comment">// ${escaped}</span>`,
+    });
 
     return lines;
   }
@@ -489,21 +559,29 @@ export class Codeifier {
   private toGenericFunction(text: string): CodeLineData[] {
     const funcName = this.generateFuncName(text);
     const escaped = this.escapeString(text);
+    const lines: CodeLineData[] = [];
 
-    return [
-      {
-        ln: this.lineNumber++,
-        content: `<span class="text-vscode-keyword">function</span> <span class="text-vscode-function">${funcName}</span>&lt;<span class="text-vscode-type">T</span>&gt;<span class="text-vscode-bracket-1">(</span><span class="text-vscode-variable">data</span>: <span class="text-vscode-type">T</span><span class="text-vscode-bracket-1">)</span>: <span class="text-vscode-type">T</span> <span class="text-vscode-bracket-3">{</span>`,
-      },
-      {
-        ln: this.lineNumber++,
-        content: `  <span class="text-vscode-control">return</span> <span class="text-vscode-variable">data</span>;`,
-      },
-      {
-        ln: this.lineNumber++,
-        content: `<span class="text-vscode-bracket-3">}</span>`,
-      },
-    ];
+    lines.push({
+      ln: this.lineNumber++,
+      content: `<span class="text-vscode-keyword">function</span> <span class="text-vscode-function">${funcName}</span>&lt;<span class="text-vscode-type">T</span>&gt;<span class="text-vscode-bracket-1">(</span><span class="text-vscode-variable">data</span>: <span class="text-vscode-type">T</span><span class="text-vscode-bracket-1">)</span>: <span class="text-vscode-type">T</span> <span class="text-vscode-bracket-3">{</span>`,
+    });
+
+    lines.push({
+      ln: this.lineNumber++,
+      content: `  <span class="text-vscode-keyword">const</span> <span class="text-vscode-variable">content</span> = <span class="text-vscode-string">\`${escaped}\`</span>;`,
+    });
+
+    lines.push({
+      ln: this.lineNumber++,
+      content: `  <span class="text-vscode-control">return</span> <span class="text-vscode-variable">data</span>;`,
+    });
+
+    lines.push({
+      ln: this.lineNumber++,
+      content: `<span class="text-vscode-bracket-3">}</span>`,
+    });
+
+    return lines;
   }
 
   private toArrowFunction(text: string): CodeLineData[] {
