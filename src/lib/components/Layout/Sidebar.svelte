@@ -47,7 +47,7 @@
   
   <input type="file" accept=".epub" class="hidden" bind:this={fileInput} onchange={handleFileSelect} />
 
-  <div class="flex-1 overflow-y-auto">
+  <div class="flex-1 overflow-y-auto min-h-0">
     {#if showAllBooks && bookStore.availableBooks.length > 0}
       <!-- All Books View -->
       <div class="p-2">
@@ -91,9 +91,9 @@
       </div>
     {:else}
       <!-- Project Section -->
-      <div>
+      <div class="flex flex-col h-full">
         <div 
-          class="flex items-center px-1 py-1 cursor-pointer hover:bg-[#2a2d2e] text-vscode-text font-bold text-xs group"
+          class="flex items-center px-1 py-1 cursor-pointer hover:bg-[#2a2d2e] text-vscode-text font-bold text-xs group flex-shrink-0"
           onclick={() => isOpen = !isOpen}
           onkeydown={(e) => e.key === 'Enter' && (isOpen = !isOpen)}
           role="button"
@@ -115,10 +115,10 @@
         </div>
 
         {#if isOpen}
-          <div class="flex flex-col">
+          <div class="flex flex-col flex-1 min-h-0 overflow-y-auto editor-scroll-container">
             {#each bookStore.chapters as chapter}
               <div 
-                class="flex items-center px-4 py-1 cursor-pointer gap-1.5 text-[13px] border-l-[3px] border-transparent
+                class="flex items-center px-4 py-1 cursor-pointer gap-1.5 text-[13px] border-l-[3px] border-transparent flex-shrink-0
                 {bookStore.currentChapter?.id === chapter.id ? 'bg-[#37373d] text-white border-vscode-selection' : 'text-vscode-text hover:bg-[#2a2d2e]'}"
                 onclick={() => bookStore.selectChapter(chapter)}
                 onkeydown={(e) => e.key === 'Enter' && bookStore.selectChapter(chapter)}
