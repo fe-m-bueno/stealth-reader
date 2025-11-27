@@ -1,4 +1,4 @@
-import { epubService, type Chapter } from "../services/epub";
+import { epubService, type Chapter, type SearchResult } from "../services/epub";
 import { codeifier, type CodeLineData } from "../services/codeifier";
 import { storageService, type BookData } from "../services/storage";
 import { tick } from "svelte";
@@ -15,6 +15,8 @@ export interface ReadingSession {
   wordWrap: boolean;
   chapterScrollProgress: number;
   isLoading: boolean;
+  targetSearchLine?: number;
+  targetSearchQuery?: string;
 }
 
 class BookStore {
@@ -29,6 +31,12 @@ class BookStore {
   isSplitView = $state(false);
   leftSessionId = $state<string | null>(null);
   rightSessionId = $state<string | null>(null);
+
+  // Search state
+  isSearchOpen = $state(false);
+  searchQuery = $state("");
+  searchResults = $state<SearchResult[]>([]);
+  isSearching = $state(false);
 
   // Computed properties for backward compatibility
   get bookLoaded() {
@@ -84,6 +92,10 @@ class BookStore {
 
   get sessionsCount() {
     return this.readingSessions.length;
+  }
+
+  get activeSession() {
+    return this.getActiveSession();
   }
 
   get overallBookProgress() {
@@ -231,6 +243,8 @@ class BookStore {
       wordWrap: true,
       chapterScrollProgress: 0,
       isLoading: false,
+      targetSearchLine: undefined,
+      targetSearchQuery: undefined,
     };
 
     this.readingSessions.push(session);
@@ -293,6 +307,82 @@ class BookStore {
       this.leftSessionId = null;
       this.rightSessionId = null;
     }
+  }
+
+  // Search methods
+  openSearch() {
+    this.isSearchOpen = true;
+  }
+
+  closeSearch() {
+    this.isSearchOpen = false;
+    this.searchQuery = "";
+    this.searchResults = [];
+  }
+
+  async performSearch(query: string) {
+    this.searchQuery = query;
+
+    if (!query.trim()) {
+      this.searchResults = [];
+      return;
+    }
+
+    this.isSearching = true;
+
+    try {
+      // Get the active session's book data
+      const activeSession = this.getActiveSession();
+      if (!activeSession) {
+        this.searchResults = [];
+        return;
+      }
+
+      const bookData = this.availableBooks.find(
+        (b) => b.id === activeSession.bookId
+      );
+      if (!bookData) {
+        this.searchResults = [];
+        return;
+      }
+
+      // Load the EPUB data
+      const buffer = this.base64ToArrayBuffer(bookData.epubData!);
+      await epubService.loadBook(buffer);
+
+      // Perform the search
+      const results = await epubService.searchInBook(query);
+      this.searchResults = results;
+    } catch (error) {
+      console.error("Search failed:", error);
+      this.searchResults = [];
+    } finally {
+      this.isSearching = false;
+    }
+  }
+
+  async navigateToSearchResult(result: SearchResult) {
+    const activeSession = this.getActiveSession();
+    if (!activeSession) return;
+
+    // Find the chapter
+    const chapter = activeSession.chapters.find(
+      (c) => c.id === result.chapterId
+    );
+    if (!chapter) return;
+
+    // Switch to the chapter
+    await this.selectChapterForSession(activeSession.id, chapter);
+
+    // Store the target line for scrolling after chapter loads
+    activeSession.targetSearchLine = result.lineNumber;
+    activeSession.targetSearchQuery = result.lineContent.substring(
+      result.matchStart,
+      result.matchEnd
+    );
+
+    // Close search panel
+    this.closeSearch();
   }
 
   private countWords(text: string): number {
@@ -486,6 +576,38 @@ class BookStore {
     const activeSession = this.getActiveSession();
     if (activeSession) {
       await this.selectChapterForSession(activeSession.id, chapter);
+    }
+  }
+
+  async nextChapter() {
+    const activeSession = this.getActiveSession();
+    if (activeSession && activeSession.currentChapter) {
+      const chapters = activeSession.chapters;
+      const currentIndex = chapters.findIndex(
+        (c) => c.id === activeSession.currentChapter!.id
+      );
+      if (currentIndex >= 0 && currentIndex < chapters.length - 1) {
+        await this.selectChapterForSession(
+          activeSession.id,
+          chapters[currentIndex + 1]
+        );
+      }
+    }
+  }
+
+  async previousChapter() {
+    const activeSession = this.getActiveSession();
+    if (activeSession && activeSession.currentChapter) {
+      const chapters = activeSession.chapters;
+      const currentIndex = chapters.findIndex(
+        (c) => c.id === activeSession.currentChapter!.id
+      );
+      if (currentIndex > 0) {
+        await this.selectChapterForSession(
+          activeSession.id,
+          chapters[currentIndex - 1]
+        );
+      }
     }
   }
 

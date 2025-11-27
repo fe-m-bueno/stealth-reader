@@ -4,13 +4,24 @@
   import StatusBar from './StatusBar.svelte';
   import TitleBar from './TitleBar.svelte';
   import EditorPane from '../Editor/EditorPane.svelte';
+  import ReadingStats from '../ReadingStats.svelte';
+  import { bookStore } from '../../stores/book.svelte';
 
   let sidebarComponent: Sidebar;
+  let showStats = $state(false);
 
   function handleUploadShortcut() {
     if (sidebarComponent) {
       sidebarComponent.triggerFileSelect();
     }
+  }
+
+  function handleSearchClick() {
+    bookStore.openSearch();
+  }
+
+  function handleStatsClick() {
+    showStats = !showStats;
   }
 </script>
 
@@ -21,14 +32,18 @@
   <!-- Main Area -->
   <div class="flex-1 flex overflow-hidden">
     <!-- Activity Bar -->
-    <ActivityBar />
+    <ActivityBar onSearchClick={handleSearchClick} onStatsClick={handleStatsClick} />
 
     <!-- Sidebar -->
     <Sidebar bind:this={sidebarComponent} />
 
     <!-- Editor Area -->
     <div class="flex-1 flex flex-col min-w-0">
-      <EditorPane />
+      {#if showStats}
+        <ReadingStats />
+      {:else}
+        <EditorPane />
+      {/if}
     </div>
   </div>
 

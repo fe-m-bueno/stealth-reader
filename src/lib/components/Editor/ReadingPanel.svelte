@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { Loader2 } from 'lucide-svelte';
+  import { Loader2, ChevronRight } from 'lucide-svelte';
   import CodeLine from './CodeLine.svelte';
   import type { ReadingSession } from '../../stores/book.svelte';
+  import { bookStore } from '../../stores/book.svelte';
 
   interface Props {
     session: ReadingSession;
@@ -19,6 +20,35 @@
     }
   });
 
+  $effect(() => {
+    // Scroll to search result line if available
+    if (session.targetSearchLine && session.targetSearchQuery && scrollContainer && session.currentCode.length > 0) {
+      scrollToSearchResult();
+    }
+  });
+
+  function scrollToSearchResult() {
+    if (!session.targetSearchLine || !session.targetSearchQuery || !scrollContainer) return;
+
+    // Find the line in the code that contains the search query
+    const targetLineIndex = session.currentCode.findIndex(line =>
+      line.content.toLowerCase().includes(session.targetSearchQuery!.toLowerCase())
+    );
+
+    if (targetLineIndex !== -1) {
+      // Calculate approximate scroll position
+      const lineHeight = 20; // Approximate line height in pixels
+      const targetScrollTop = targetLineIndex * lineHeight;
+
+      // Scroll to the target line with some offset
+      scrollContainer.scrollTop = Math.max(0, targetScrollTop - 100);
+
+      // Clear the target after scrolling
+      session.targetSearchLine = undefined;
+      session.targetSearchQuery = undefined;
+    }
+  }
+
   function handleScroll(e: Event) {
     const target = e.target as HTMLDivElement;
     const scrollTop = target.scrollTop;
@@ -29,6 +59,17 @@
       const progress = scrollTop / (scrollHeight - clientHeight);
       onScroll?.(progress);
     }
+  }
+
+  function handleNextChapter() {
+    bookStore.nextChapter();
+  }
+
+  function hasNextChapter(): boolean {
+    if (!session.currentChapter) return false;
+    const chapters = session.chapters;
+    const currentIndex = chapters.findIndex(c => c.id === session.currentChapter!.id);
+    return currentIndex >= 0 && currentIndex < chapters.length - 1;
   }
 </script>
 
@@ -60,6 +101,19 @@
           wordWrap={session.wordWrap}
         />
       {/each}
+
+      {#if hasNextChapter()}
+        <div class="flex justify-center py-8">
+          <button
+            onclick={handleNextChapter}
+            class="flex items-center gap-2 px-6 py-3 bg-vscode-keyword hover:bg-vscode-keyword/80 text-white rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
+            title="Próximo capítulo"
+          >
+            <span class="text-sm font-medium">Próximo capítulo</span>
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      {/if}
     {/if}
   </div>
 </div>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import Tabs from './Tabs.svelte';
   import ReadingPanel from './ReadingPanel.svelte';
+  import SearchPanel from './SearchPanel.svelte';
   import { bookStore } from '../../stores/book.svelte';
 
   function handleScroll(sessionId: string, progress: number) {
@@ -49,5 +50,16 @@
       </div>
     {/if}
   {/if}
+
+  <!-- Search Panel -->
+  <SearchPanel
+    isOpen={bookStore.isSearchOpen}
+    query={bookStore.searchQuery}
+    results={bookStore.searchResults}
+    isSearching={bookStore.isSearching}
+    onClose={bookStore.closeSearch.bind(bookStore)}
+    onSearch={bookStore.performSearch.bind(bookStore)}
+    onResultClick={bookStore.navigateToSearchResult.bind(bookStore)}
+  />
 </div>
 

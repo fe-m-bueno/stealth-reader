@@ -64,3 +64,38 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
 }
+
+/* VSCode-style scrollbar */
+.editor-scroll-container::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+.editor-scroll-container::-webkit-scrollbar-track {
+  background: #1e1e1e;
+  border-radius: 0;
+}
+
+.editor-scroll-container::-webkit-scrollbar-thumb {
+  background: #424242;
+  border-radius: 7px;
+  border: 3px solid #1e1e1e;
+}
+
+.editor-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #4f4f4f;
+}
+
+.editor-scroll-container::-webkit-scrollbar-thumb:active {
+  background: #5f5f5f;
+}
+
+.editor-scroll-container::-webkit-scrollbar-corner {
+  background: #1e1e1e;
+}
+
+/* Firefox scrollbar styling */
+.editor-scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: #424242 #1e1e1e;
+}

@@ -6,6 +6,15 @@ export interface Chapter {
   href: string;
 }
 
+export interface SearchResult {
+  chapterId: string;
+  chapterTitle: string;
+  lineNumber: number;
+  lineContent: string;
+  matchStart: number;
+  matchEnd: number;
+}
+
 export class EpubService {
   private book: Book | null = null;
 
@@ -353,6 +362,63 @@ export class EpubService {
       .trim();
 
     return text;
+  }
+
+  async searchInBook(query: string): Promise<SearchResult[]> {
+    if (!this.book || !query.trim()) return [];
+
+    const results: SearchResult[] = [];
+    const chapters = await this.getChapters();
+
+    // Process chapters in batches to avoid blocking UI
+    const batchSize = 5;
+    for (let i = 0; i < chapters.length; i += batchSize) {
+      const batch = chapters.slice(i, i + batchSize);
+      const batchPromises = batch.map(async (chapter) => {
+        try {
+          const text = await this.getChapterText(chapter.href);
+          const chapterResults = this.searchInText(text, query, chapter);
+          results.push(...chapterResults);
+        } catch (e) {
+          console.warn(`Failed to search in chapter ${chapter.label}:`, e);
+        }
+      });
+
+      await Promise.all(batchPromises);
+
+      // Allow UI to update between batches
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    return results;
+  }
+
+  private searchInText(
+    text: string,
+    query: string,
+    chapter: Chapter
+  ): SearchResult[] {
+    const results: SearchResult[] = [];
+    const lines = text.split("\n");
+    const searchTerm = query.toLowerCase();
+
+    lines.forEach((line, index) => {
+      const lowerLine = line.toLowerCase();
+      const matchIndex = lowerLine.indexOf(searchTerm);
+
+      if (matchIndex !== -1) {
+        results.push({
+          chapterId: chapter.id,
+          chapterTitle: chapter.label,
+          lineNumber: index + 1, // 1-based line numbers
+          lineContent: line.trim(),
+          matchStart: matchIndex,
+          matchEnd: matchIndex + query.length,
+        });
+      }
+    });
+
+    return results;
   }
 }
 
