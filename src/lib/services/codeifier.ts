@@ -300,13 +300,48 @@ export class Codeifier {
   }
 
   private toArrayLiteral(text: string): CodeLineData[] {
-    const items = text.split(/[,;] e |[,;] ou |[,.]\s+/).slice(0, 3);
-    const escapedItems = items.map(
+    // Primeiro, tenta dividir por padrões explícitos de lista (conjunções)
+    let items: string[] = [];
+
+    // Verifica se há padrões de lista explícitos (conjunções)
+    if (/[,;]\s+(e|ou)\s+/i.test(text)) {
+      // Divide por vírgulas/ponto-vírgulas seguidos de "e" ou "ou"
+      items = text
+        .split(/[,;]\s+(?:e|ou)\s+/i)
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0);
+    }
+    // Se começa com número, bullet ou dash, trata como lista numerada/marcada
+    else if (/^\d+\.|^[-*+]|^•/.test(text)) {
+      // Remove o marcador inicial e divide por vírgulas/pontos apenas se houver múltiplos itens claros
+      const cleaned = text.replace(/^\d+\.\s*|^[-*+•]\s*/, "");
+      // Só divide se houver múltiplas vírgulas/pontos que parecem separadores de lista
+      const commaCount = (cleaned.match(/,\s+/g) || []).length;
+      if (commaCount >= 2) {
+        items = cleaned
+          .split(/,\s+/)
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0);
+      } else {
+        // Se não parece uma lista real, preserva o texto completo
+        items = [cleaned.trim()];
+      }
+    }
+    // Se não há padrões claros de lista, preserva o texto completo
+    else {
+      items = [text.trim()];
+    }
+
+    // Limita a 3 itens para manter o código legível
+    const finalItems = items.slice(0, 3);
+
+    const escapedItems = finalItems.map(
       (item) =>
         `<span class="text-vscode-string">"${this.escapeString(
           item.trim()
         )}"</span>`
     );
+
     return [
       {
         ln: this.lineNumber++,
