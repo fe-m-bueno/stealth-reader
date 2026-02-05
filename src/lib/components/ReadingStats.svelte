@@ -13,11 +13,11 @@
   }
 </script>
 
-<div class="h-full flex flex-col bg-vscode-bg text-vscode-text">
+<div class="h-full flex flex-col bg-cursor-bg text-cursor-text">
   <!-- Tab Navigation -->
-  <div class="flex border-b border-vscode-border bg-vscode-sidebar/30">
+  <div class="flex border-b border-white/5 bg-cursor-panel/30">
     <button
-      class="flex items-center gap-2 px-6 py-3 border-b-2 transition-all relative {activeTab === 'dashboard' ? 'border-blue-400 text-blue-400 bg-vscode-bg/50' : 'border-transparent text-vscode-comment hover:text-vscode-text hover:bg-vscode-bg/30'}"
+      class="flex items-center gap-2 px-6 py-3 border-b-2 transition-all relative {activeTab === 'dashboard' ? 'border-cursor-accent text-cursor-accent bg-cursor-bg/50' : 'border-transparent text-cursor-comment hover:text-cursor-text hover:bg-cursor-bg/30'}"
       onclick={() => activeTab = 'dashboard'}
       onkeydown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -32,11 +32,11 @@
       <BarChart3 size={16} />
       <span>Dashboard</span>
       {#if activeTab === 'dashboard'}
-        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-400"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-cursor-accent"></div>
       {/if}
     </button>
     <button
-      class="flex items-center gap-2 px-6 py-3 border-b-2 transition-all relative {activeTab === 'heatmap' ? 'border-blue-400 text-blue-400 bg-vscode-bg/50' : 'border-transparent text-vscode-comment hover:text-vscode-text hover:bg-vscode-bg/30'}"
+      class="flex items-center gap-2 px-6 py-3 border-b-2 transition-all relative {activeTab === 'heatmap' ? 'border-cursor-accent text-cursor-accent bg-cursor-bg/50' : 'border-transparent text-cursor-comment hover:text-cursor-text hover:bg-cursor-bg/30'}"
       onclick={() => activeTab = 'heatmap'}
       onkeydown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -51,11 +51,11 @@
       <Map size={16} />
       <span>Heatmap</span>
       {#if activeTab === 'heatmap'}
-        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-400"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-cursor-accent"></div>
       {/if}
     </button>
     <button
-      class="flex items-center gap-2 px-6 py-3 border-b-2 transition-all relative {activeTab === 'sessions' ? 'border-blue-400 text-blue-400 bg-vscode-bg/50' : 'border-transparent text-vscode-comment hover:text-vscode-text hover:bg-vscode-bg/30'}"
+      class="flex items-center gap-2 px-6 py-3 border-b-2 transition-all relative {activeTab === 'sessions' ? 'border-cursor-accent text-cursor-accent bg-cursor-bg/50' : 'border-transparent text-cursor-comment hover:text-cursor-text hover:bg-cursor-bg/30'}"
       onclick={() => activeTab = 'sessions'}
       onkeydown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -70,7 +70,7 @@
       <Clock size={16} />
       <span>Sessões</span>
       {#if activeTab === 'sessions'}
-        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-400"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-cursor-accent"></div>
       {/if}
     </button>
   </div>

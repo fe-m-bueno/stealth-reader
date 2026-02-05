@@ -16,10 +16,10 @@
   }
 </script>
 
-<div class="flex bg-[#2d2d2d] h-9 overflow-x-auto scrollbar-hide flex-shrink-0 z-10 relative">
+<div class="flex bg-cursor-panel h-9 overflow-x-auto scrollbar-hide flex-shrink-0 z-10 relative">
   {#if bookStore.sessionsCount === 0}
     <!-- Show placeholder tab when no sessions -->
-    <div class="flex items-center px-3 min-w-[120px] max-w-[200px] border-r border-[#1e1e1e] bg-[#3c3c3c] text-gray-400">
+    <div class="flex items-center px-3 min-w-[120px] max-w-[200px] border-r border-white/5 bg-cursor-panel text-[#505050]">
       <span class="text-xs truncate flex-1">
         {bookStore.availableBooks.length > 0 ? 'Select a book to read' : 'No books available'}
       </span>
@@ -27,7 +27,7 @@
   {:else}
     {#each bookStore.readingSessions as session (session.id)}
     <div
-      class="flex items-center px-3 min-w-[120px] max-w-[200px] border-r border-[#1e1e1e] cursor-pointer group {bookStore.activeSessionId === session.id ? 'bg-vscode-bg text-white border-t-2 border-t-vscode-keyword' : 'bg-[#3c3c3c] text-gray-400 hover:bg-[#454545]'}"
+      class="flex items-center px-3 min-w-[120px] max-w-[200px] border-r border-white/5 cursor-pointer group {bookStore.activeSessionId === session.id ? 'bg-cursor-bg text-white' : 'bg-cursor-panel text-[#505050] hover:bg-white/5'}"
       onclick={() => switchToSession(session.id)}
       onkeydown={(e) => e.key === 'Enter' && switchToSession(session.id)}
       role="tab"
@@ -54,9 +54,9 @@
 
     <!-- Split view toggle button -->
     {#if bookStore.sessionsCount >= 2}
-      <div class="flex items-center px-2 border-r border-[#1e1e1e] cursor-pointer hover:bg-[#454545]">
+      <div class="flex items-center px-2 border-r border-white/5 cursor-pointer hover:bg-white/5">
         <button
-          class="p-1 rounded hover:bg-white/20 {bookStore.isSplitView ? 'text-vscode-keyword' : 'text-gray-400'}"
+          class="p-1 rounded hover:bg-white/20 {bookStore.isSplitView ? 'text-cursor-accent' : 'text-[#505050]'}"
           onclick={toggleSplitView}
           title={bookStore.isSplitView ? 'Disable split view' : 'Enable split view'}
         >

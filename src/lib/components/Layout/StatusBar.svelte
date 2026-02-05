@@ -3,13 +3,13 @@
   import { bookStore } from '../../stores/book.svelte';
 </script>
 
-<div class="h-6 bg-vscode-statusBar text-white text-[11px] flex items-center justify-between px-2 select-none font-sans cursor-default">
+<div class="h-6 bg-cursor-panel text-[#cccccc82] text-[11px] flex items-center justify-between px-2 select-none font-sans cursor-default border-t border-white/5">
   <div class="flex items-center gap-3 h-full">
-    <div class="flex items-center gap-1 hover:bg-white/20 px-2 h-full cursor-pointer">
+    <div class="flex items-center gap-1 hover:bg-white/10 px-2 h-full cursor-pointer">
       <GitBranch size={12} />
       <span>main*</span>
     </div>
-    <div class="flex items-center gap-1 hover:bg-white/20 px-2 h-full cursor-pointer">
+    <div class="flex items-center gap-1 hover:bg-white/10 px-2 h-full cursor-pointer">
       <RefreshCw size={12} />
     </div>
     <div class="flex items-center gap-2 hover:bg-white/20 px-2 h-full cursor-pointer">
@@ -52,7 +52,7 @@
     <!-- Progress for each session -->
     {#if bookStore.sessionsCount > 0}
       {#each bookStore.readingSessions as session (session.id)}
-        <div class="hover:bg-white/20 px-2 h-full flex items-center cursor-pointer border-l border-white/20 flex-shrink-0" title={session.bookTitle}>
+        <div class="hover:bg-white/10 px-2 h-full flex items-center cursor-pointer border-l border-white/5 flex-shrink-0" title={session.bookTitle}>
           <BookOpen size={12} class="mr-1 flex-shrink-0" />
           <span class="text-xs truncate max-w-[80px]">
             {session.currentChapter ? session.currentChapter.label : session.bookTitle}

@@ -633,7 +633,7 @@ class BookStore {
           {
             ln: 1,
             content:
-              '<span class="text-vscode-comment">// Loading chapter...</span>',
+              '<span class="text-cursor-comment">// Loading chapter...</span>',
           },
         ],
       });
@@ -646,7 +646,7 @@ class BookStore {
         {
           ln: 1,
           content:
-            '<span class="text-vscode-comment">// Loading chapter...</span>',
+            '<span class="text-cursor-comment">// Loading chapter...</span>',
         },
       ];
 
@@ -704,7 +704,7 @@ class BookStore {
               {
                 ln: 1,
                 content:
-                  '<span class="text-vscode-comment">// Failed to process chapter content</span>',
+                  '<span class="text-cursor-comment">// Failed to process chapter content</span>',
               },
             ],
             chapterScrollProgress: 0,
@@ -718,7 +718,7 @@ class BookStore {
             {
               ln: 1,
               content:
-                '<span class="text-vscode-comment">// Chapter content is empty or could not be loaded</span>',
+                '<span class="text-cursor-comment">// Chapter content is empty or could not be loaded</span>',
             },
           ],
           chapterScrollProgress: 0,
@@ -735,7 +735,7 @@ class BookStore {
             {
               ln: 1,
               content:
-                '<span class="text-vscode-comment">// Failed to load chapter content</span>',
+                '<span class="text-cursor-comment">// Failed to load chapter content</span>',
             },
           ],
           chapterScrollProgress: 0,

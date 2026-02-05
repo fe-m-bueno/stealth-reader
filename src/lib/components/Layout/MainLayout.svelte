@@ -25,7 +25,7 @@
   }
 </script>
 
-<div class="flex flex-col h-screen w-screen bg-vscode-bg text-vscode-text overflow-hidden">
+<div class="flex flex-col h-screen w-screen bg-cursor-bg text-cursor-text overflow-hidden">
   <!-- Title Bar -->
   <TitleBar {handleUploadShortcut} />
 

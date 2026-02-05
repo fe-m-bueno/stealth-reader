@@ -13,13 +13,13 @@
   }
 </script>
 
-<div class="flex flex-col h-full bg-vscode-bg w-full overflow-hidden">
+<div class="flex flex-col h-full bg-cursor-bg w-full overflow-hidden">
   <Tabs />
 
   {#if bookStore.isSplitView && bookStore.leftSessionId && bookStore.rightSessionId}
     <!-- Split view -->
     <div class="flex flex-1 overflow-hidden min-h-0">
-      <div class="flex-1 border-r border-[#3c3c3c] overflow-hidden">
+      <div class="flex-1 border-r border-white/5 overflow-hidden">
         <ReadingPanel
           session={getSessionById(bookStore.leftSessionId)!}
           onScroll={(progress) => handleScroll(bookStore.leftSessionId!, progress)}
@@ -35,7 +35,7 @@
   {:else}
     <!-- Single view -->
     {#if bookStore.sessionsCount === 0}
-      <div class="flex items-center justify-center flex-1 text-vscode-text/30 select-none">
+      <div class="flex items-center justify-center flex-1 text-cursor-text/30 select-none">
         <div class="text-center">
           <div class="text-6xl mb-4 opacity-20">📖</div>
           <div>Open a book to start reading</div>

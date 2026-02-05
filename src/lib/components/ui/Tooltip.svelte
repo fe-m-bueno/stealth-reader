@@ -33,19 +33,19 @@
   {#if showTooltip}
     <div
       bind:this={tooltipElement}
-      class="absolute z-50 px-3 py-2 text-xs bg-vscode-sidebar border border-vscode-border rounded shadow-lg max-w-xs {getPositionClasses()}"
+      class="absolute z-50 px-3 py-2 text-xs bg-cursor-panel border border-white/5 rounded shadow-lg max-w-xs {getPositionClasses()}"
       role="tooltip"
     >
-      <div class="text-vscode-text whitespace-pre-line">{text}</div>
+      <div class="text-cursor-text whitespace-pre-line">{text}</div>
       <!-- Arrow -->
       {#if position === 'top'}
-        <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-vscode-border"></div>
+        <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white/5"></div>
       {:else if position === 'bottom'}
-        <div class="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-vscode-border"></div>
+        <div class="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-white/5"></div>
       {:else if position === 'left'}
-        <div class="absolute left-full top-1/2 -translate-y-1/2 border-4 border-transparent border-l-vscode-border"></div>
+        <div class="absolute left-full top-1/2 -translate-y-1/2 border-4 border-transparent border-l-white/5"></div>
       {:else if position === 'right'}
-        <div class="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-vscode-border"></div>
+        <div class="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-white/5"></div>
       {/if}
     </div>
   {/if}

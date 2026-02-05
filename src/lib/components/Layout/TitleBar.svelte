@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Square, Minus, X, Check } from 'lucide-svelte';
+  import { Square, Minus, X, Check, LayoutGrid, Columns, PanelLeft, Settings } from 'lucide-svelte';
   import { bookStore } from '../../stores/book.svelte';
 
   interface Props {
@@ -25,7 +25,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="h-8 bg-vscode-titleBar flex items-center justify-between select-none text-xs text-[#cccccc] relative z-50" onclick={(e) => e.stopPropagation()}>
+<div class="h-8 bg-cursor-panel flex items-center justify-between select-none text-xs text-[#cccccc] relative z-50" onclick={(e) => e.stopPropagation()}>
   <div class="flex items-center h-full px-2">
     <img src="/favicon.svg" alt="logo" class="w-4 h-4 mr-3 opacity-80" />
     <div class="flex items-center gap-1">
@@ -39,17 +39,17 @@
           Edit
         </span>
         {#if activeMenu === 'edit'}
-          <div class="absolute top-full left-0 mt-1 w-48 bg-[#252526] border border-[#454545] shadow-xl rounded-sm py-1 flex flex-col gap-0.5">
-            <div class="px-3 py-1.5 hover:bg-[#094771] hover:text-white cursor-pointer flex justify-between" onclick={() => bookStore.increaseFontSize()}>
+          <div class="absolute top-full left-0 mt-1 w-48 bg-cursor-panel border border-white/5 shadow-xl rounded-sm py-1 flex flex-col gap-0.5">
+            <div class="px-3 py-1.5 hover:bg-white/10 hover:text-white cursor-pointer flex justify-between" onclick={() => bookStore.increaseFontSize()}>
               <span>Zoom In</span>
               <span class="opacity-50">Ctrl+=</span>
             </div>
-            <div class="px-3 py-1.5 hover:bg-[#094771] hover:text-white cursor-pointer flex justify-between" onclick={() => bookStore.decreaseFontSize()}>
+            <div class="px-3 py-1.5 hover:bg-white/10 hover:text-white cursor-pointer flex justify-between" onclick={() => bookStore.decreaseFontSize()}>
               <span>Zoom Out</span>
               <span class="opacity-50">Ctrl+-</span>
             </div>
-            <div class="h-[1px] bg-[#454545] my-1"></div>
-            <div class="px-3 py-1.5 hover:bg-[#094771] hover:text-white cursor-pointer flex justify-between" onclick={() => bookStore.toggleWordWrap()}>
+            <div class="h-[1px] bg-white/5 my-1"></div>
+            <div class="px-3 py-1.5 hover:bg-white/10 hover:text-white cursor-pointer flex justify-between" onclick={() => bookStore.toggleWordWrap()}>
               <div class="flex items-center gap-2">
                 {#if bookStore.wordWrap}
                   <Check size={14} />
@@ -78,19 +78,36 @@
     <div class="fixed inset-0 z-[-1]" onclick={closeMenu}></div>
   {/if}
 
-  <div class="flex-1 text-center text-vscode-text/60 text-xs font-medium">
-    stealth-reader - Visual Studio Code
+  <div class="flex-1 text-center text-cursor-text-muted text-xs font-medium">
+    stealth-reader - Cursor
   </div>
 
   <div class="flex items-center h-full">
+    <!-- Layout controls -->
+    <div class="flex items-center h-full border-r border-white/10 mr-1 pr-1">
+      <div class="h-full w-8 flex items-center justify-center hover:bg-white/10 cursor-pointer" title="Layout 1">
+        <LayoutGrid size={14} color="#CCCCCC99" />
+      </div>
+      <div class="h-full w-8 flex items-center justify-center hover:bg-white/10 cursor-pointer" title="Layout 2">
+        <Columns size={14} color="#CCCCCC99" />
+      </div>
+      <div class="h-full w-8 flex items-center justify-center hover:bg-white/10 cursor-pointer" title="Layout 3">
+        <PanelLeft size={14} color="#CCCCCC99" />
+      </div>
+      <div class="h-full w-8 flex items-center justify-center hover:bg-white/10 cursor-pointer" title="Settings">
+        <Settings size={14} color="#CCCCCC99" />
+      </div>
+    </div>
+    
+    <!-- Window controls -->
     <div class="h-full w-10 flex items-center justify-center hover:bg-white/10 cursor-default">
-      <Minus size={14} />
+      <Minus size={14} color="#CCCCCC99" />
     </div>
     <div class="h-full w-10 flex items-center justify-center hover:bg-white/10 cursor-default">
-      <Square size={12} />
+      <Square size={12} color="#CCCCCC99" />
     </div>
-    <div class="h-full w-10 flex items-center justify-center hover:bg-red-500 hover:text-white cursor-default">
-      <X size={14} />
+    <div class="h-full w-10 flex items-center justify-center hover:bg-red-500 hover:text-white cursor-default group">
+      <X size={14} class="text-[#CCCCCC99] group-hover:text-white transition-colors" />
     </div>
   </div>
 </div>

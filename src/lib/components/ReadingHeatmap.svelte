@@ -45,7 +45,7 @@
   }
 
   function getIntensityClass(value: number): string {
-    if (value === 0) return 'bg-vscode-bg/20 hover:bg-vscode-bg/30';
+    if (value === 0) return 'bg-cursor-bg/20 hover:bg-cursor-bg/30';
     if (value <= 15) return 'bg-green-900/40 hover:bg-green-900/60'; // Very light
     if (value <= 30) return 'bg-green-700/50 hover:bg-green-700/70'; // Light
     if (value <= 60) return 'bg-green-600/60 hover:bg-green-600/80'; // Medium
@@ -91,17 +91,17 @@
   }
 </script>
 
-<div class="p-6 bg-vscode-bg text-vscode-text h-full overflow-y-auto editor-scroll-container">
+<div class="p-6 bg-cursor-bg text-cursor-text h-full overflow-y-auto editor-scroll-container">
   <div class="max-w-6xl mx-auto">
     <div class="flex items-center justify-between mb-6">
       <div>
         <h2 class="text-2xl font-bold mb-2 flex items-center gap-2">
           <span>Heatmap de Leitura</span>
           <Tooltip text="Visualização dos seus padrões de leitura ao longo do ano. Cada quadrado representa um dia do ano. Cores mais escuras indicam mais tempo de leitura. Útil para identificar dias da semana e períodos em que você lê mais.">
-            <Info size={18} class="text-vscode-comment cursor-help" />
+            <Info size={18} class="text-cursor-comment cursor-help" />
           </Tooltip>
         </h2>
-        <p class="text-sm text-vscode-comment">
+        <p class="text-sm text-cursor-comment">
           Visualize seus padrões de leitura ao longo do ano. Cada quadrado representa um dia.
         </p>
       </div>
@@ -109,43 +109,43 @@
 
     <!-- Estatísticas do Heatmap -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-vscode-sidebar/50 border border-vscode-border rounded-lg p-4">
-        <div class="text-xs text-vscode-comment mb-1">Total de Minutos</div>
+      <div class="bg-cursor-sidebar/50 border border-cursor-border rounded-lg p-4">
+        <div class="text-xs text-cursor-comment mb-1">Total de Minutos</div>
         <div class="text-xl font-bold text-green-400">{getTotalMinutes()}</div>
       </div>
-      <div class="bg-vscode-sidebar/50 border border-vscode-border rounded-lg p-4">
-        <div class="text-xs text-vscode-comment mb-1">Dias com Leitura</div>
+      <div class="bg-cursor-sidebar/50 border border-cursor-border rounded-lg p-4">
+        <div class="text-xs text-cursor-comment mb-1">Dias com Leitura</div>
         <div class="text-xl font-bold text-blue-400">{getDaysWithReading()}</div>
       </div>
-      <div class="bg-vscode-sidebar/50 border border-vscode-border rounded-lg p-4">
-        <div class="text-xs text-vscode-comment mb-1">Média Diária</div>
+      <div class="bg-cursor-sidebar/50 border border-cursor-border rounded-lg p-4">
+        <div class="text-xs text-cursor-comment mb-1">Média Diária</div>
         <div class="text-xl font-bold text-purple-400">{getAverageDailyMinutes()} min</div>
       </div>
-      <div class="bg-vscode-sidebar/50 border border-vscode-border rounded-lg p-4">
-        <div class="text-xs text-vscode-comment mb-1">Máximo Diário</div>
+      <div class="bg-cursor-sidebar/50 border border-cursor-border rounded-lg p-4">
+        <div class="text-xs text-cursor-comment mb-1">Máximo Diário</div>
         <div class="text-xl font-bold text-orange-400">{getMaxDailyMinutes()} min</div>
       </div>
     </div>
 
     <!-- Legend -->
-    <div class="bg-vscode-sidebar/50 border border-vscode-border rounded-lg p-4 mb-6">
+    <div class="bg-cursor-sidebar/50 border border-cursor-border rounded-lg p-4 mb-6">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <span class="text-sm text-vscode-comment">Intensidade:</span>
+          <span class="text-sm text-cursor-comment">Intensidade:</span>
           <div class="flex items-center gap-2">
-            <span class="text-xs text-vscode-comment">Menos</span>
+            <span class="text-xs text-cursor-comment">Menos</span>
             <div class="flex gap-1">
-              <div class="w-4 h-4 rounded-sm bg-vscode-bg/20 border border-vscode-border"></div>
-              <div class="w-4 h-4 rounded-sm bg-green-900/40 border border-vscode-border"></div>
-              <div class="w-4 h-4 rounded-sm bg-green-700/50 border border-vscode-border"></div>
-              <div class="w-4 h-4 rounded-sm bg-green-600/60 border border-vscode-border"></div>
-              <div class="w-4 h-4 rounded-sm bg-green-500/70 border border-vscode-border"></div>
-              <div class="w-4 h-4 rounded-sm bg-green-400/80 border border-vscode-border"></div>
+              <div class="w-4 h-4 rounded-sm bg-cursor-bg/20 border border-cursor-border"></div>
+              <div class="w-4 h-4 rounded-sm bg-green-900/40 border border-cursor-border"></div>
+              <div class="w-4 h-4 rounded-sm bg-green-700/50 border border-cursor-border"></div>
+              <div class="w-4 h-4 rounded-sm bg-green-600/60 border border-cursor-border"></div>
+              <div class="w-4 h-4 rounded-sm bg-green-500/70 border border-cursor-border"></div>
+              <div class="w-4 h-4 rounded-sm bg-green-400/80 border border-cursor-border"></div>
             </div>
-            <span class="text-xs text-vscode-comment">Mais</span>
+            <span class="text-xs text-cursor-comment">Mais</span>
           </div>
         </div>
-        <div class="text-xs text-vscode-comment">
+        <div class="text-xs text-cursor-comment">
           <Tooltip text="Cores indicam minutos de leitura: Cinza = 0min, Verde escuro = 1-15min, Verde médio = 16-30min, Verde claro = 31-60min, Verde brilhante = 61-120min, Verde muito brilhante = 120+min">
             <span class="cursor-help underline decoration-dotted">Como ler</span>
           </Tooltip>
@@ -154,12 +154,12 @@
     </div>
 
     <!-- Heatmap Grid -->
-    <div class="bg-vscode-sidebar/30 border border-vscode-border rounded-lg p-4 overflow-x-auto">
+    <div class="bg-cursor-sidebar/30 border border-cursor-border rounded-lg p-4 overflow-x-auto">
       <div class="inline-block min-w-max">
         <!-- Day labels -->
         <div class="flex mb-2 ml-8">
           {#each ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'] as day}
-            <div class="w-4 text-xs text-vscode-comment text-center mx-0.5">{day}</div>
+            <div class="w-4 text-xs text-cursor-comment text-center mx-0.5">{day}</div>
           {/each}
         </div>
 
@@ -167,7 +167,7 @@
           {#each months as month, monthIndex}
             <div class="flex flex-col">
               <!-- Month label -->
-              <div class="text-xs text-vscode-comment text-center mb-2 h-6 flex items-center justify-center font-medium">
+              <div class="text-xs text-cursor-comment text-center mb-2 h-6 flex items-center justify-center font-medium">
                 {month}
               </div>
 
@@ -199,10 +199,10 @@
 
     <!-- Selected Day Info -->
     {#if selectedDay}
-      <div class="mt-6 bg-vscode-sidebar/50 border border-green-500/50 rounded-lg p-4">
+      <div class="mt-6 bg-cursor-sidebar/50 border border-green-500/50 rounded-lg p-4">
         <div class="flex items-center justify-between">
           <div>
-            <div class="text-sm text-vscode-comment mb-1">Dia Selecionado</div>
+            <div class="text-sm text-cursor-comment mb-1">Dia Selecionado</div>
             <div class="text-lg font-semibold">
               {selectedDay.date.toLocaleDateString('pt-BR', {
                 weekday: 'long',
@@ -217,13 +217,13 @@
                 {selectedDay.value % 60}m de leitura
               </div>
             {:else}
-              <div class="text-sm text-vscode-comment mt-1">
+              <div class="text-sm text-cursor-comment mt-1">
                 Nenhum tempo de leitura registrado
               </div>
             {/if}
           </div>
           <button
-            class="text-vscode-comment hover:text-vscode-text px-3 py-1 rounded border border-vscode-border hover:border-vscode-selection transition-colors"
+            class="text-cursor-comment hover:text-cursor-text px-3 py-1 rounded border border-cursor-border hover:border-cursor-selection transition-colors"
             onclick={() => selectedDay = null}
           >
             Fechar
@@ -236,7 +236,7 @@
     <div class="mt-6 bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
       <div class="flex items-start gap-3">
         <Info size={18} class="text-blue-400 mt-0.5 flex-shrink-0" />
-        <div class="text-sm text-vscode-text">
+        <div class="text-sm text-cursor-text">
           <strong class="text-blue-400">Dica:</strong> Passe o mouse sobre os quadrados para ver detalhes de cada dia. 
           Clique em um quadrado para destacá-lo. Use esta visualização para identificar padrões como "leio mais nos fins de semana" 
           ou "tenho uma rotina consistente".

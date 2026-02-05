@@ -1,46 +1,55 @@
 @import "tailwindcss";
 
 @theme {
-  --color-vscode-bg: #1e1e1e;
-  --color-vscode-sidebar: #252526;
-  --color-vscode-activityBar: #333333;
-  --color-vscode-statusBar: #007acc;
-  --color-vscode-text: #d4d4d4;
-  --color-vscode-selection: #264f78;
+  /* Cursor Dark Theme - Main UI Colors */
+  --color-cursor-bg: #1a1a1a; /* Editor background */
+  --color-cursor-panel: #141414; /* Sidebar, ActivityBar, StatusBar, TitleBar, Panels */
+  --color-cursor-text: #D8DEE9; /* Primary text */
+  --color-cursor-text-muted: #CCCCCC99; /* Muted text */
+  --color-cursor-text-subtle: #cccccc82; /* Subtle text (status bar) */
+  --color-cursor-border: #FFFFFF0D; /* Subtle borders (5% white) */
+  --color-cursor-input: #2A2A2A55; /* Input background */
+  --color-cursor-input-border: #2A2A2A; /* Input border */
+  --color-cursor-accent: #4c9df3; /* Primary accent (buttons, links) */
+  --color-cursor-accent-hover: #66aefa; /* Accent hover */
+  --color-cursor-selection: #40404099; /* Selection background */
+  --color-cursor-line-highlight: #292929; /* Line highlight */
+  --color-cursor-hover: #2A2A2A99; /* List item hover */
+  --color-cursor-active: #ffffff1d; /* Active/selected item */
 
-  /* Syntax colors - VSCode Dark Theme */
-  --color-vscode-keyword: #569cd6; /* blue - const, let, if, for, try, catch */
-  --color-vscode-function: #dcdcaa; /* yellow - function names */
-  --color-vscode-string: #ce9178; /* orange - strings */
-  --color-vscode-comment: #6a9955; /* green - comments */
-  --color-vscode-variable: #9cdcfe; /* light blue - variables */
-  --color-vscode-type: #4ec9b0; /* cyan - types, interfaces, classes */
-  --color-vscode-class: #4ec9b0; /* cyan - classes, types */
-  --color-vscode-number: #b5cea8; /* light green - numbers */
-  --color-vscode-property: #9cdcfe; /* light blue - properties */
-  --color-vscode-control: #c586c0; /* purple - return, await, async */
-  --color-vscode-operator: #d4d4d4; /* white - operators like =>, ., etc */
-  --color-vscode-bracket-1: #ffd700; /* gold - () */
-  --color-vscode-bracket-2: #da70d6; /* orchid - [] */
-  --color-vscode-bracket-3: #ffd700; /* gold - {} */
+  /* Syntax colors - Cursor Dark Theme (Pastel Palette) */
+  --color-cursor-keyword: #87c3ff; /* Pastel blue - const, let, if, for, try, catch */
+  --color-cursor-function: #f8c762; /* Pastel yellow - function names */
+  --color-cursor-string: #e394dc; /* Pastel pink/magenta - strings */
+  --color-cursor-comment: #6d6d6d; /* Neutral gray - comments */
+  --color-cursor-variable: #d6d6dd; /* Soft white - variables */
+  --color-cursor-type: #82d2ce; /* Pastel teal - types, interfaces, classes */
+  --color-cursor-class: #82d2ce; /* Pastel teal - classes, types */
+  --color-cursor-number: #a8cc7c; /* Soft green - numbers */
+  --color-cursor-property: #AA9BF5; /* Pastel lilac - properties */
+  --color-cursor-control: #aaa0fa; /* Pastel purple - return, await, async */
+  --color-cursor-operator: #d6d6dd; /* Soft white - operators like =>, ., etc */
+  --color-cursor-bracket-1: #f8c762; /* Pastel yellow - () */
+  --color-cursor-bracket-2: #e394dc; /* Pastel pink - [] */
+  --color-cursor-bracket-3: #87c3ff; /* Pastel blue - {} */
 
-  --font-family-mono: "Consolas", "Courier New", monospace;
+  --font-family-mono: "JetBrains Mono", "Fira Code", "Consolas", "Courier New", monospace;
 }
 
 body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* EPUB Image Styles */
 .epub-image-container {
   margin: 15px 0;
   padding: 12px;
-  border: 1px solid #555;
+  border: 1px solid #2A2A2A;
   border-radius: 6px;
-  background: #2d2d30;
+  background: #141414;
   display: inline-block;
   max-width: 100%;
 }
@@ -65,37 +74,37 @@ body {
   display: none; /* Chrome, Safari and Opera */
 }
 
-/* VSCode-style scrollbar */
+/* Cursor-style scrollbar */
 .editor-scroll-container::-webkit-scrollbar {
   width: 14px;
   height: 14px;
 }
 
 .editor-scroll-container::-webkit-scrollbar-track {
-  background: #1e1e1e;
+  background: #1a1a1a;
   border-radius: 0;
 }
 
 .editor-scroll-container::-webkit-scrollbar-thumb {
-  background: #424242;
+  background: #40404055;
   border-radius: 7px;
-  border: 3px solid #1e1e1e;
+  border: 3px solid #1a1a1a;
 }
 
 .editor-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #4f4f4f;
+  background: #40404055;
 }
 
 .editor-scroll-container::-webkit-scrollbar-thumb:active {
-  background: #5f5f5f;
+  background: #40404055;
 }
 
 .editor-scroll-container::-webkit-scrollbar-corner {
-  background: #1e1e1e;
+  background: #1a1a1a;
 }
 
 /* Firefox scrollbar styling */
 .editor-scroll-container {
   scrollbar-width: thin;
-  scrollbar-color: #424242 #1e1e1e;
+  scrollbar-color: #40404055 #1a1a1a;
 }

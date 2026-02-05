@@ -28,19 +28,19 @@
   }
 </script>
 
-<div class="w-64 bg-vscode-sidebar flex flex-col h-full border-r border-black/20 text-sm select-none">
+<div class="w-64 bg-cursor-panel flex flex-col h-full border-r border-white/5 text-sm select-none">
   <!-- Sidebar Header -->
-  <div class="h-9 px-4 flex items-center justify-between text-[11px] tracking-wide text-vscode-text/60 uppercase group">
+  <div class="h-9 px-4 flex items-center justify-between text-[11px] tracking-wide text-cursor-text-muted uppercase group">
     <span>Explorer</span>
     <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100">
       <button class="hover:bg-white/10 p-1 rounded" onclick={triggerFileSelect} title="Open EPUB">
-        <FolderOpen size={14} />
+        <FolderOpen size={14} color="#CCCCCC99" />
       </button>
       <button class="hover:bg-white/10 p-1 rounded" onclick={() => showAllBooks = !showAllBooks} title="Show All Books">
-        <BookOpen size={14} />
+        <BookOpen size={14} color="#CCCCCC99" />
       </button>
       <button class="hover:bg-white/10 p-1 rounded">
-        <MoreHorizontal size={14} />
+        <MoreHorizontal size={14} color="#CCCCCC99" />
       </button>
     </div>
   </div>
@@ -51,20 +51,20 @@
     {#if showAllBooks && bookStore.availableBooks.length > 0}
       <!-- All Books View -->
       <div class="p-2">
-        <div class="text-xs text-vscode-text/60 mb-2 px-2">All Books ({bookStore.availableBooks.length})</div>
+        <div class="text-xs text-cursor-text-muted mb-2 px-2">All Books ({bookStore.availableBooks.length})</div>
         {#each bookStore.availableBooks as book}
           <div
-            class="flex items-center justify-between px-2 py-1.5 cursor-pointer hover:bg-[#2a2d2e] rounded group {bookStore.currentBookId === book.id ? 'bg-[#37373d]' : ''}"
+            class="flex items-center justify-between px-2 py-1.5 cursor-pointer hover:bg-[#2A2A2A99] rounded group {bookStore.currentBookId === book.id ? 'bg-white/[0.07]' : ''}"
             onclick={() => { bookStore.createSessionFromBook(book.id); showAllBooks = false; }}
             onkeydown={(e) => e.key === 'Enter' && bookStore.createSessionFromBook(book.id)}
             role="button"
             tabindex="0"
           >
             <div class="flex items-center gap-2 flex-1 min-w-0">
-              <BookOpen size={14} color="#569cd6" />
+              <BookOpen size={14} color="#87c3ff" />
               <div class="flex-1 min-w-0">
                 <div class="text-xs truncate">{book.title}</div>
-                <div class="text-[10px] text-vscode-text/50 truncate">{book.author}</div>
+                <div class="text-[10px] text-cursor-text-muted truncate">{book.author}</div>
               </div>
             </div>
             <button 
@@ -79,9 +79,9 @@
       </div>
     {:else if !bookStore.bookLoaded}
       <div class="p-4 text-center mt-10">
-        <div class="text-xs text-vscode-text/70 mb-4">You have not yet opened a folder.</div>
+        <div class="text-xs text-cursor-text-muted mb-4">You have not yet opened a folder.</div>
         <button
-          class="bg-vscode-selection text-white px-4 py-1.5 rounded-sm text-xs hover:bg-blue-600 transition-colors w-full flex items-center justify-center gap-2"
+          class="bg-cursor-accent text-white px-4 py-1.5 rounded-sm text-xs hover:bg-cursor-accent-hover transition-colors w-full flex items-center justify-center gap-2"
           onclick={triggerFileSelect}
           title="Open EPUB file (Ctrl+Shift+O)"
         >
@@ -93,16 +93,16 @@
       <!-- Project Section -->
       <div class="flex flex-col h-full">
         <div 
-          class="flex items-center px-1 py-1 cursor-pointer hover:bg-[#2a2d2e] text-vscode-text font-bold text-xs group flex-shrink-0"
+          class="flex items-center px-1 py-1 cursor-pointer hover:bg-[#2A2A2A99] text-cursor-text font-bold text-xs group flex-shrink-0"
           onclick={() => isOpen = !isOpen}
           onkeydown={(e) => e.key === 'Enter' && (isOpen = !isOpen)}
           role="button"
           tabindex="0"
         >
           {#if isOpen}
-            <ChevronDown size={16} />
+            <ChevronDown size={16} color="#CCCCCC99" />
           {:else}
-            <ChevronRight size={16} />
+            <ChevronRight size={16} color="#CCCCCC99" />
           {/if}
           <span class="ml-1 truncate uppercase flex-1">{bookStore.metadata?.title || 'PROJECT'}</span>
           <button 
@@ -119,13 +119,13 @@
             {#each bookStore.chapters as chapter}
               <div 
                 class="flex items-center px-4 py-1 cursor-pointer gap-1.5 text-[13px] border-l-[3px] border-transparent flex-shrink-0
-                {bookStore.currentChapter?.id === chapter.id ? 'bg-[#37373d] text-white border-vscode-selection' : 'text-vscode-text hover:bg-[#2a2d2e]'}"
+                {bookStore.currentChapter?.id === chapter.id ? 'bg-white/[0.07] text-white border-cursor-accent/50' : 'text-cursor-text hover:bg-[#2A2A2A99]'}"
                 onclick={() => bookStore.selectChapter(chapter)}
                 onkeydown={(e) => e.key === 'Enter' && bookStore.selectChapter(chapter)}
                 role="button"
                 tabindex="0"
               >
-                <FileCode size={14} color="#569cd6" />
+                <FileCode size={14} color="#87c3ff" />
                 <span class="truncate">{chapter.label}.ts</span>
               </div>
             {/each}

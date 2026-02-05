@@ -98,9 +98,9 @@
   }
 </script>
 
-<div class="w-12 bg-vscode-activityBar flex flex-col items-center py-2 justify-between h-full border-r border-black/20 z-10">
+<div class="w-12 bg-cursor-panel flex flex-col items-center py-2 justify-between h-full border-r border-white/5 z-10">
   <div class="flex flex-col gap-0 w-full">
-    <div class="h-12 w-full flex items-center justify-center border-l-2 border-white cursor-pointer bg-vscode-bg/10">
+    <div class="h-12 w-full flex items-center justify-center border-l-2 border-white cursor-pointer bg-cursor-bg/10">
       <Files size={24} color="white" strokeWidth={1.5} />
     </div>
     <div
@@ -117,10 +117,10 @@
       title="Buscar no livro"
       aria-label="Buscar no livro"
     >
-      <Search size={24} color="#cccccc" strokeWidth={1.5} />
+      <Search size={24} color="#CCCCCC99" strokeWidth={1.5} />
     </div>
     <div class="h-12 w-full flex items-center justify-center border-l-2 border-transparent opacity-60 hover:opacity-100 cursor-pointer">
-      <GitGraph size={24} color="#cccccc" strokeWidth={1.5} />
+      <GitGraph size={24} color="#CCCCCC99" strokeWidth={1.5} />
     </div>
     <div
       class="h-auto min-h-[48px] w-full flex flex-col items-center justify-center border-l-2 border-transparent opacity-60 hover:opacity-100 cursor-pointer relative py-1"
@@ -139,7 +139,7 @@
       {#if isReading}
         <Pause size={18} color="#4ade80" strokeWidth={2} />
       {:else}
-        <Play size={18} color="#cccccc" strokeWidth={1.5} />
+        <Play size={18} color="#CCCCCC99" strokeWidth={1.5} />
       {/if}
       {#if isReading || readingTime > 0}
         <div class="text-[10px] text-green-400 font-mono mt-0.5 leading-tight text-center">
@@ -169,19 +169,19 @@
       title="Ver estatísticas"
       aria-label="Ver estatísticas"
     >
-      <BarChart3 size={24} color="#cccccc" strokeWidth={1.5} />
+      <BarChart3 size={24} color="#CCCCCC99" strokeWidth={1.5} />
     </div>
     <div class="h-12 w-full flex items-center justify-center border-l-2 border-transparent opacity-60 hover:opacity-100 cursor-pointer">
-      <SquareDashed size={24} color="#cccccc" strokeWidth={1.5} />
+      <SquareDashed size={24} color="#CCCCCC99" strokeWidth={1.5} />
     </div>
   </div>
 
   <div class="flex flex-col gap-0 w-full mb-1">
     <div class="h-12 w-full flex items-center justify-center opacity-60 hover:opacity-100 cursor-pointer">
-      <User size={24} color="#cccccc" strokeWidth={1.5} />
+      <User size={24} color="#CCCCCC99" strokeWidth={1.5} />
     </div>
     <div class="h-12 w-full flex items-center justify-center opacity-60 hover:opacity-100 cursor-pointer">
-      <Settings size={24} color="#cccccc" strokeWidth={1.5} />
+      <Settings size={24} color="#CCCCCC99" strokeWidth={1.5} />
     </div>
   </div>
 </div>
