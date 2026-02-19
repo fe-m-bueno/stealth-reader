@@ -6,7 +6,7 @@
 
   let { text, position = 'top' }: Props = $props();
   let showTooltip = $state(false);
-  let tooltipElement: HTMLDivElement;
+  let tooltipElement: HTMLDivElement | undefined = $state();
 
   function getPositionClasses(): string {
     switch (position) {
