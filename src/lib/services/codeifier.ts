@@ -400,7 +400,7 @@ export class Codeifier {
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
     });
     return lines;
   }
@@ -479,7 +479,7 @@ export class Codeifier {
       const varName = this.generateContextualVarName(text);
       lines.push({
         ln: this.lineNumber++,
-        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span>;`,
+        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
       });
       lines.push({
         ln: this.lineNumber++,
@@ -521,7 +521,7 @@ export class Codeifier {
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">${type}</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">${type}</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
     });
     return lines;
   }
@@ -564,7 +564,7 @@ export class Codeifier {
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
     });
     lines.push({
       ln: this.lineNumber++,
@@ -593,7 +593,7 @@ export class Codeifier {
       const varName = this.generateContextualVarName(text);
       lines.push({
         ln: this.lineNumber++,
-        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span>;`,
+        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
       });
       lines.push({
         ln: this.lineNumber++,
@@ -717,7 +717,7 @@ export class Codeifier {
       const varName = this.generateContextualVarName(text);
       lines.push({
         ln: this.lineNumber++,
-        content: `    <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span>;`,
+        content: `    <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
       });
       lines.push({
         ln: this.lineNumber++,
@@ -768,7 +768,7 @@ export class Codeifier {
     } else {
       lines.push({
         ln: this.lineNumber++,
-        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">content</span> = <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span>;`,
+        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">content</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
       });
     }
 
@@ -800,7 +800,7 @@ export class Codeifier {
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${funcName}</span> = <span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">input</span>: <span class="text-cursor-type">string</span><span class="text-cursor-bracket-1">)</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${funcName}</span> = <span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">input</span>: <span class="text-cursor-type">string</span><span class="text-cursor-bracket-1">)</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
     });
     return lines;
   }
@@ -820,7 +820,7 @@ export class Codeifier {
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">data</span>.<span class="text-cursor-function">map</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">item</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span><span class="text-cursor-bracket-1">)</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">data</span>.<span class="text-cursor-function">map</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">item</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span><span class="text-cursor-bracket-1">)</span>;`,
     });
     return lines;
   }
@@ -845,7 +845,7 @@ export class Codeifier {
       const varName = this.generateContextualVarName(text);
       lines.push({
         ln: this.lineNumber++,
-        content: `  .<span class="text-cursor-function">then</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">result</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span><span class="text-cursor-bracket-1">)</span>`,
+        content: `  .<span class="text-cursor-function">then</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">result</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span><span class="text-cursor-bracket-1">)</span>`,
       });
     }
 
@@ -974,7 +974,7 @@ export class Codeifier {
       const varName = this.generateContextualVarName(text);
       lines.push({
         ln: this.lineNumber++,
-        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span>;`,
+        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
       });
       lines.push({
         ln: this.lineNumber++,
@@ -1242,7 +1242,7 @@ export class Codeifier {
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
     });
     lines.push({
       ln: this.lineNumber++,
@@ -1266,7 +1266,7 @@ export class Codeifier {
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join('\\n')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
     });
     return lines;
   }
