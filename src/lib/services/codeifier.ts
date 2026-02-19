@@ -35,7 +35,7 @@ export class Codeifier {
   private hasImports = false;
   private hasExports = false;
   private fileSection: 'imports' | 'types' | 'constants' | 'functions' | 'exports' = 'imports';
-  
+
   // Cache regex patterns for better performance
   private static readonly PARAGRAPH_SPLIT = /\n\s*\n/;
   private static readonly WORD_SPLIT = /\s+/;
@@ -60,7 +60,10 @@ export class Codeifier {
 
   transform(text: string): CodeLineData[] {
     const lines: CodeLineData[] = [];
-    
+
+    // Normalize literal newlines (/n or \n) to actual newlines
+    text = text.replace(/\\n/g, '\n').replace(/\/n/g, '\n');
+
     // Add imports at the beginning (first 1-3 structures)
     if (Math.random() < 0.7 && this.structureCount === 0) {
       const importLines = this.toImportStatement(text.split('\n')[0] || text);
@@ -386,7 +389,7 @@ export class Codeifier {
     const varName = this.generateContextualVarName(text, 'Dialogue');
     const escaped = this.escapeString(text);
     const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 20);
-    
+
     if (brokenLines.length === 1) {
       return [{
         ln: this.lineNumber++,
@@ -509,7 +512,7 @@ export class Codeifier {
     const varName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
     const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 20);
-    
+
     if (brokenLines.length === 1) {
       const content = `<span class="text-cursor-keyword">${type}</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">"${escaped}"</span>;`;
       return [{ ln: this.lineNumber++, content }];
@@ -549,7 +552,7 @@ export class Codeifier {
     const funcName = this.generateContextualFuncName(text);
     const escaped = this.escapeString(text);
     const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 15);
-    
+
     if (brokenLines.length === 1) {
       return [{
         ln: this.lineNumber++,
@@ -580,7 +583,7 @@ export class Codeifier {
       ln: this.lineNumber++,
       content: `<span class="text-cursor-function">${methodName}</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">data</span>: <span class="text-cursor-type">string</span><span class="text-cursor-bracket-1">)</span>: <span class="text-cursor-type">string</span> <span class="text-cursor-bracket-3">{</span>`,
     });
-    
+
     if (brokenLines.length === 1) {
       lines.push({
         ln: this.lineNumber++,
@@ -597,12 +600,12 @@ export class Codeifier {
         content: `  <span class="text-cursor-control">return</span> <span class="text-cursor-variable">${varName}</span>;`,
       });
     }
-    
+
     lines.push({
       ln: this.lineNumber++,
       content: `<span class="text-cursor-bracket-3">}</span>`,
     });
-    
+
     return lines;
   }
 
@@ -961,7 +964,7 @@ export class Codeifier {
       ln: this.lineNumber++,
       content: `<span class="text-cursor-keyword">function</span> <span class="text-cursor-function">${funcName}</span><span class="text-cursor-bracket-1">()</span> <span class="text-cursor-bracket-3">{</span>`,
     });
-    
+
     if (brokenLines.length === 1) {
       lines.push({
         ln: this.lineNumber++,
@@ -978,7 +981,7 @@ export class Codeifier {
         content: `  <span class="text-cursor-control">return</span> <span class="text-cursor-variable">${varName}</span>;`,
       });
     }
-    
+
     lines.push({
       ln: this.lineNumber++,
       content: `<span class="text-cursor-bracket-3">}</span>`,
@@ -1001,14 +1004,14 @@ export class Codeifier {
       ln: this.lineNumber++,
       content: `  <span class="text-cursor-string">&lt;<span class="text-cursor-class">div</span> <span class="text-cursor-property">className</span>=<span class="text-cursor-string">"content"</span>&gt;</span>`,
     });
-    
+
     brokenLines.forEach(line => {
       lines.push({
         ln: this.lineNumber++,
         content: `    <span class="text-cursor-string">${line}</span>`,
       });
     });
-    
+
     lines.push({
       ln: this.lineNumber++,
       content: `  <span class="text-cursor-string">&lt;/<span class="text-cursor-class">div</span>&gt;</span>`,
@@ -1024,7 +1027,7 @@ export class Codeifier {
   private toInlineComment(text: string): CodeLineData[] {
     const escaped = this.escapeString(text);
     const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 3);
-    
+
     return brokenLines.map(line => ({
       ln: this.lineNumber++,
       content: `<span class="text-cursor-comment">// ${line}</span>`,
@@ -1228,7 +1231,7 @@ export class Codeifier {
     const varName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
     const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 20);
-    
+
     if (brokenLines.length === 1) {
       return [{
         ln: this.lineNumber++,
@@ -1252,7 +1255,7 @@ export class Codeifier {
     const varName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
     const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 20);
-    
+
     if (brokenLines.length === 1) {
       return [{
         ln: this.lineNumber++,
@@ -1271,7 +1274,7 @@ export class Codeifier {
   private toImportStatement(text: string): CodeLineData[] {
     const moduleName = this.generateContextualFuncName(text).toLowerCase();
     const importName = this.generateContextualFuncName(text, '');
-    
+
     return [{
       ln: this.lineNumber++,
       content: `<span class="text-cursor-keyword">import</span> <span class="text-cursor-bracket-3">{</span> <span class="text-cursor-variable">${importName}</span> <span class="text-cursor-bracket-3">}</span> <span class="text-cursor-keyword">from</span> <span class="text-cursor-string">'./${moduleName}'</span>;`,
@@ -1281,7 +1284,7 @@ export class Codeifier {
   private toExportStatement(text: string): CodeLineData[] {
     const exportName = this.generateContextualFuncName(text, '');
     const escaped = this.escapeString(text);
-    
+
     return [{
       ln: this.lineNumber++,
       content: `<span class="text-cursor-keyword">export</span> <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${exportName}</span> = <span class="text-cursor-string">"${escaped}"</span>;`,
@@ -1360,7 +1363,7 @@ export class Codeifier {
   private toTemplateLiteralType(text: string): CodeLineData[] {
     const typeName = this.generateContextualTypeName(text, 'Id');
     const escaped = this.escapeString(text);
-    
+
     return [{
       ln: this.lineNumber++,
       content: `<span class="text-cursor-keyword">type</span> <span class="text-cursor-type">${typeName}</span> = <span class="text-cursor-string">\`scene_${escaped.slice(0, 20).replace(/\s+/g, '_')}\`</span>;`,
@@ -1416,7 +1419,7 @@ export class Codeifier {
   private toArrayChain(text: string): CodeLineData[] {
     const escaped = this.escapeString(text);
     const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 30);
-    
+
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
@@ -1441,7 +1444,7 @@ export class Codeifier {
   private toOptionalChaining(text: string): CodeLineData[] {
     const varName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
-    
+
     return [{
       ln: this.lineNumber++,
       content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">scene</span>?.<span class="text-cursor-property">content</span>?.<span class="text-cursor-property">text</span> ?? <span class="text-cursor-string">"${escaped}"</span>;`,
@@ -1451,7 +1454,7 @@ export class Codeifier {
   private toNullishCoalescing(text: string): CodeLineData[] {
     const varName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
-    
+
     return [{
       ln: this.lineNumber++,
       content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">chapter</span>.<span class="text-cursor-property">title</span> ?? <span class="text-cursor-string">"${escaped}"</span>;`,
@@ -1597,10 +1600,10 @@ export class Codeifier {
     const nouns: string[] = [];
     const verbs: string[] = [];
     const properNouns: string[] = [];
-    
+
     // Common Portuguese verbs (infinitive form)
     const verbPatterns = /\b(ser|estar|ter|fazer|dizer|ir|ver|saber|querer|poder|dar|vir|passar|ficar|deixar|começar|acabar|voltar|encontrar|pensar|olhar|ouvir|falar|trabalhar|viver|morrer|nascer|chegar|sair|entrar|subir|descer|abrir|fechar|pegar|largar|correr|andar|caminhar|sentar|levantar|dormir|acordar|comer|beber|escrever|ler|aprender|ensinar|ajudar|precisar|gostar|amar|odiar|esquecer|lembrar|conhecer|encontrar|perder|ganhar|comprar|vender|pagar|receber|esperar|chegar|partir|voltar|continuar|parar|começar|terminar|acabar|ficar|deixar|permitir|proibir|obrigar|forçar|conseguir|tentar|provar|testar|mostrar|esconder|procurar|achar|encontrar|perder|ganhar|vencer|perder|jogar|brincar|rir|chorar|sorrir|chorar|gritar|falar|calar|ouvir|escutar|ver|olhar|observar|notar|perceber|sentir|tocar|pegar|largar|segurar|soltar|empurrar|puxar|levantar|abaixar|subir|descer|entrar|sair|chegar|partir|voltar|ir|vir|ficar|permanecer|continuar|parar|começar|terminar|acabar)\b/i;
-    
+
     // Common Portuguese nouns
     const nounPatterns = /\b(sol|lua|estrela|mar|rio|montanha|vila|cidade|rua|casa|porta|janela|mesa|cadeira|livro|papel|caneta|lápis|gente|pessoa|homem|mulher|criança|velho|jovem|amigo|inimigo|família|mãe|pai|filho|filha|irmão|irmã|avô|avó|tio|tia|primo|prima|vizinho|vizinha|professor|professora|aluno|aluna|médico|médica|enfermeiro|enfermeira|advogado|advogada|engenheiro|engenheira|arquiteto|arquiteta|artista|músico|música|pintor|pintora|escritor|escritora|poeta|poetisa|ator|atriz|diretor|diretora|chef|cozinheiro|cozinheira|garçom|garçonete|vendedor|vendedora|comprador|compradora|cliente|fornecedor|fornecedora|empregado|empregada|patrão|patroa|chefe|funcionário|funcionária|trabalhador|trabalhadora|operário|operária|mecânico|mecânica|eletricista|carpinteiro|carpinteira|pedreiro|pedreira|pintor|pintora|jardineiro|jardineira|faxineiro|faxineira|segurança|porteiro|porteira|recepcionista|secretário|secretária|assistente|gerente|supervisor|supervisora|diretor|diretora|presidente|vice-presidente|ministro|ministra|governador|governadora|prefeito|prefeita|vereador|vereadora|deputado|deputada|senador|senadora|juiz|juíza|promotor|promotora|delegado|delegada|policial|bombeiro|bombeira|soldado|sargento|capitão|major|coronel|general|almirante|comandante|tenente|subtenente|cabo|soldado|recruta|veterano|veterana|guerreiro|guerreira|herói|heroína|vilão|vilã|príncipe|princesa|rei|rainha|imperador|imperatriz|nobre|nobreza|plebeu|plebeia|escravo|escrava|servo|serva|criado|criada|mordomo|mordoma|aia|dama|donzela|cavaleiro|dama|senhor|senhora|senhorita|moço|moça|rapaz|garota|menino|menina|bebê|recém-nascido|recém-nascida|criança|adolescente|jovem|adulto|adulta|idoso|idosa|velho|velha|ancião|anciã|morto|morta|vivo|viva|nascido|nascida|casado|casada|solteiro|solteira|divorciado|divorciada|viúvo|viúva|noivo|noiva|esposo|esposa|marido|mulher|namorado|namorada|amante|amigo|amiga|inimigo|inimiga|rival|concorrente|competidor|competidora|aliado|aliada|parceiro|parceira|sócio|sócia|colaborador|colaboradora|colegas|companheiro|companheira|camarada|colega|vizinho|vizinha|morador|moradora|habitante|residente|hóspede|visitante|turista|viajante|passageiro|passageira|motorista|condutor|condutora|piloto|copiloto|navegador|navegadora|guia|turista|explorador|exploradora|aventureiro|aventureira|desbravador|desbravadora|pioneiro|pioneira|colonizador|colonizadora|conquistador|conquistadora|invasor|invasora|defensor|defensora|protetor|protetora|guardião|guardiã|vigia|sentinela|vigilante|observador|observadora|espectador|espectadora|ouvinte|testemunha|vítima|sobrevivente|refugiado|refugiada|imigrante|emigrante|nativo|nativa|estrangeiro|estrangeira|turista|viajante|explorador|exploradora|aventureiro|aventureira|desbravador|desbravadora|pioneiro|pioneira|colonizador|colonizadora|conquistador|conquistadora|invasor|invasora|defensor|defensora|protetor|protetora|guardião|guardiã|vigia|sentinela|vigilante|observador|observadora|espectador|espectadora|ouvinte|testemunha|vítima|sobrevivente|refugiado|refugiada|imigrante|emigrante|nativo|nativa|estrangeiro|estrangeira)\b/i;
 
@@ -1629,10 +1632,10 @@ export class Codeifier {
    */
   private generateContextualVarName(text: string, suffix: string = ''): string {
     const keywords = this.extractKeywords(text);
-    
+
     // Prefer proper nouns, then nouns, then verbs
     const preferredWord = keywords.properNouns[0] || keywords.nouns[0] || keywords.verbs[0] || keywords.allWords[0];
-    
+
     if (!preferredWord) {
       return `content${suffix}`;
     }
@@ -1653,9 +1656,9 @@ export class Codeifier {
     const keywords = this.extractKeywords(text);
     const prefixes = prefix ? [prefix] : ['handle', 'process', 'render', 'format', 'create', 'get', 'set'];
     const prefixChoice = prefixes[Math.floor(Math.random() * prefixes.length)];
-    
+
     const preferredWord = keywords.verbs[0] || keywords.nouns[0] || keywords.allWords[0];
-    
+
     if (!preferredWord) {
       return `${prefixChoice}Content`;
     }
@@ -1674,7 +1677,7 @@ export class Codeifier {
   private generateContextualTypeName(text: string, suffix: string = ''): string {
     const keywords = this.extractKeywords(text);
     const preferredWord = keywords.nouns[0] || keywords.properNouns[0] || keywords.allWords[0];
-    
+
     if (!preferredWord) {
       return `Content${suffix}`;
     }
@@ -1728,7 +1731,7 @@ export class Codeifier {
 
     // Select randomly from candidates
     const selected = candidates[Math.floor(Math.random() * candidates.length)];
-    
+
     // Track usage
     this.recentStructures.push(selected);
     if (this.recentStructures.length > 10) {
@@ -1760,7 +1763,7 @@ export class Codeifier {
 
       // Find best break point
       let breakPoint = maxLength;
-      
+
       // Prefer sentence endings
       const sentenceEnd = remaining.substring(0, maxLength).lastIndexOf(/[.!?]\s/.source);
       if (sentenceEnd > maxLength * 0.6) {
