@@ -4,29 +4,29 @@ export interface CodeLineData {
 }
 
 type StructureType =
-  | 'import'
-  | 'type-definition'
-  | 'interface'
-  | 'class'
-  | 'const'
-  | 'function'
-  | 'async-function'
-  | 'arrow-function'
-  | 'generic-function'
-  | 'method'
-  | 'jsdoc'
-  | 'comment'
-  | 'inline-comment'
-  | 'console-log'
-  | 'type-guard'
-  | 'mapped-type'
-  | 'template-literal-type'
-  | 'namespace'
-  | 'destructuring'
-  | 'array-chain'
-  | 'optional-chaining'
-  | 'nullish-coalescing'
-  | 'export';
+  | "import"
+  | "type-definition"
+  | "interface"
+  | "class"
+  | "const"
+  | "function"
+  | "async-function"
+  | "arrow-function"
+  | "generic-function"
+  | "method"
+  | "jsdoc"
+  | "comment"
+  | "inline-comment"
+  | "console-log"
+  | "type-guard"
+  | "mapped-type"
+  | "template-literal-type"
+  | "namespace"
+  | "destructuring"
+  | "array-chain"
+  | "optional-chaining"
+  | "nullish-coalescing"
+  | "export";
 
 export class Codeifier {
   private lineNumber = 1;
@@ -34,7 +34,12 @@ export class Codeifier {
   private structureCount = 0;
   private hasImports = false;
   private hasExports = false;
-  private fileSection: 'imports' | 'types' | 'constants' | 'functions' | 'exports' = 'imports';
+  private fileSection:
+    | "imports"
+    | "types"
+    | "constants"
+    | "functions"
+    | "exports" = "imports";
 
   // Cache regex patterns for better performance
   private static readonly PARAGRAPH_SPLIT = /\n\s*\n/;
@@ -55,18 +60,18 @@ export class Codeifier {
     this.structureCount = 0;
     this.hasImports = false;
     this.hasExports = false;
-    this.fileSection = 'imports';
+    this.fileSection = "imports";
   }
 
   transform(text: string): CodeLineData[] {
     const lines: CodeLineData[] = [];
 
     // Normalize literal newlines (/n or \n) to actual newlines
-    text = text.replace(/\\n/g, '\n').replace(/\/n/g, '\n');
+    text = text.replace(/\\n/g, "\n").replace(/\/n/g, "\n");
 
     // Add imports at the beginning (first 1-3 structures)
     if (Math.random() < 0.7 && this.structureCount === 0) {
-      const importLines = this.toImportStatement(text.split('\n')[0] || text);
+      const importLines = this.toImportStatement(text.split("\n")[0] || text);
       lines.push(...importLines);
       this.hasImports = true;
     }
@@ -117,7 +122,8 @@ export class Codeifier {
 
           // Check if this line is followed by an empty line (paragraph break)
           // This creates spacing between paragraphs
-          const isParagraphBreak = isNextLineEmpty && lineIdx < textLines.length - 1;
+          const isParagraphBreak =
+            isNextLineEmpty && lineIdx < textLines.length - 1;
 
           // Add spacing after paragraph breaks (double newlines)
           if (isParagraphBreak) {
@@ -132,7 +138,11 @@ export class Codeifier {
     // Add exports at the end (last 1-2 structures)
     if (lines.length > 10 && Math.random() < 0.4 && !this.hasExports) {
       lines.push({ ln: this.lineNumber++, content: "" });
-      const lastChunk = text.split('\n').filter(l => l.trim()).slice(-1)[0] || text;
+      const lastChunk =
+        text
+          .split("\n")
+          .filter((l) => l.trim())
+          .slice(-1)[0] || text;
       const exportLines = this.toExportStatement(lastChunk);
       lines.push(...exportLines);
       this.hasExports = true;
@@ -182,7 +192,7 @@ export class Codeifier {
     const trimmed = text.trim();
     const totalChunkLength = chunks.reduce(
       (sum, chunk) => sum + chunk.length,
-      0
+      0,
     );
     if (totalChunkLength < trimmed.length * 0.9) {
       // If we lost more than 10% of content, return the original text
@@ -212,7 +222,7 @@ export class Codeifier {
       lines.push({
         ln: this.lineNumber++,
         content: `<div class="epub-image-container" style="text-align: center; margin: 10px 0; padding: 10px; border: 1px solid #555; border-radius: 4px; background: #2d2d30;"><img src="${src}" alt="${this.escapeString(
-          alt
+          alt,
         )}" style="max-width: 100%; height: auto; border-radius: 4px; display: block; object-fit: contain;" onerror="this.style.display='none';" onload="this.parentElement.style.borderColor='#4ec9b0';" /></div>`,
       });
     } else {
@@ -220,7 +230,7 @@ export class Codeifier {
       lines.push({
         ln: this.lineNumber++,
         content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">imagePlaceholder</span> = <span class="text-cursor-string">"${this.escapeString(
-          alt
+          alt,
         )}"</span>;`,
       });
     }
@@ -232,17 +242,17 @@ export class Codeifier {
     const trimmed = text.trim();
 
     // Determine text type
-    let textType: 'dialogue' | 'list' | 'question' | 'narrative' = 'narrative';
+    let textType: "dialogue" | "list" | "question" | "narrative" = "narrative";
     if (this.isDialogue(trimmed)) {
-      textType = 'dialogue';
+      textType = "dialogue";
       return this.toStringLiteral(trimmed);
     }
     if (this.isListItem(trimmed)) {
-      textType = 'list';
+      textType = "list";
       return this.toArrayLiteral(trimmed);
     }
     if (this.isQuestion(trimmed)) {
-      textType = 'question';
+      textType = "question";
       return this.toConditional(trimmed);
     }
 
@@ -251,51 +261,51 @@ export class Codeifier {
 
     // Route to appropriate transformer
     switch (structure) {
-      case 'import':
+      case "import":
         return this.toImportStatement(trimmed);
-      case 'type-definition':
+      case "type-definition":
         return this.toTypeDefinition(trimmed);
-      case 'interface':
+      case "interface":
         return this.toInterfaceDefinition(trimmed);
-      case 'class':
+      case "class":
         return this.toClassDefinition(trimmed);
-      case 'const':
+      case "const":
         return this.toConstStatement(trimmed);
-      case 'function':
+      case "function":
         return this.toFunction(trimmed);
-      case 'async-function':
+      case "async-function":
         return this.toAsyncFunction(trimmed);
-      case 'arrow-function':
+      case "arrow-function":
         return this.toArrowFunction(trimmed);
-      case 'generic-function':
+      case "generic-function":
         return this.toGenericFunction(trimmed);
-      case 'method':
+      case "method":
         return this.toMethodDefinition(trimmed);
-      case 'jsdoc':
+      case "jsdoc":
         return this.toJSDoc(trimmed);
-      case 'comment':
+      case "comment":
         return this.toBlockComment(trimmed);
-      case 'inline-comment':
+      case "inline-comment":
         return this.toInlineComment(trimmed);
-      case 'console-log':
+      case "console-log":
         return this.toConsoleLog(trimmed);
-      case 'type-guard':
+      case "type-guard":
         return this.toTypeGuard(trimmed);
-      case 'mapped-type':
+      case "mapped-type":
         return this.toMappedType(trimmed);
-      case 'template-literal-type':
+      case "template-literal-type":
         return this.toTemplateLiteralType(trimmed);
-      case 'namespace':
+      case "namespace":
         return this.toNamespace(trimmed);
-      case 'destructuring':
+      case "destructuring":
         return this.toDestructuring(trimmed);
-      case 'array-chain':
+      case "array-chain":
         return this.toArrayChain(trimmed);
-      case 'optional-chaining':
+      case "optional-chaining":
         return this.toOptionalChaining(trimmed);
-      case 'nullish-coalescing':
+      case "nullish-coalescing":
         return this.toNullishCoalescing(trimmed);
-      case 'export':
+      case "export":
         return this.toExportStatement(trimmed);
       default:
         return this.toInlineComment(trimmed);
@@ -386,21 +396,26 @@ export class Codeifier {
   }
 
   private toStringLiteral(text: string): CodeLineData[] {
-    const varName = this.generateContextualVarName(text, 'Dialogue');
+    const varName = this.generateContextualVarName(text, "Dialogue");
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 20);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 20,
+    );
 
     if (brokenLines.length === 1) {
-      return [{
-        ln: this.lineNumber++,
-        content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${escaped}\`</span>;`,
-      }];
+      return [
+        {
+          ln: this.lineNumber++,
+          content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${escaped}\`</span>;`,
+        },
+      ];
     }
 
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span>;`,
     });
     return lines;
   }
@@ -440,29 +455,32 @@ export class Codeifier {
 
     // Limita a 3 itens para manter o código legível
     const finalItems = items.slice(0, 3);
-    const varName = this.generateContextualVarName(text, 'Items');
+    const varName = this.generateContextualVarName(text, "Items");
 
     const escapedItems = finalItems.map(
       (item) =>
         `<span class="text-cursor-string">"${this.escapeString(
-          item.trim()
-        )}"</span>`
+          item.trim(),
+        )}"</span>`,
     );
 
     return [
       {
         ln: this.lineNumber++,
         content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-bracket-2">[</span>${escapedItems.join(
-          ", "
+          ", ",
         )}<span class="text-cursor-bracket-2">]</span>;`,
       },
     ];
   }
 
   private toConditional(text: string): CodeLineData[] {
-    const condition = this.generateContextualVarName(text, 'Condition');
+    const condition = this.generateContextualVarName(text, "Condition");
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 10);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 10,
+    );
     const lines: CodeLineData[] = [];
 
     lines.push({
@@ -479,7 +497,7 @@ export class Codeifier {
       const varName = this.generateContextualVarName(text);
       lines.push({
         ln: this.lineNumber++,
-        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
+        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span>;`,
       });
       lines.push({
         ln: this.lineNumber++,
@@ -511,7 +529,10 @@ export class Codeifier {
   private toVariable(text: string, type: "const" | "let"): CodeLineData[] {
     const varName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 20);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 20,
+    );
 
     if (brokenLines.length === 1) {
       const content = `<span class="text-cursor-keyword">${type}</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">"${escaped}"</span>;`;
@@ -521,7 +542,7 @@ export class Codeifier {
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">${type}</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">${type}</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span>;`,
     });
     return lines;
   }
@@ -529,7 +550,10 @@ export class Codeifier {
   private toTypeAlias(text: string): CodeLineData[] {
     const typeName = this.generateContextualTypeName(text);
     const escaped = this.escapeString(text);
-    const commentLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 3);
+    const commentLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 3,
+    );
     const lines: CodeLineData[] = [];
 
     lines.push({
@@ -538,7 +562,7 @@ export class Codeifier {
     });
 
     // Add comment with full text to preserve content
-    commentLines.forEach(line => {
+    commentLines.forEach((line) => {
       lines.push({
         ln: this.lineNumber++,
         content: `<span class="text-cursor-comment">// ${line}</span>`,
@@ -551,20 +575,25 @@ export class Codeifier {
   private toFunctionCall(text: string): CodeLineData[] {
     const funcName = this.generateContextualFuncName(text);
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 15);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 15,
+    );
 
     if (brokenLines.length === 1) {
-      return [{
-        ln: this.lineNumber++,
-        content: `<span class="text-cursor-variable">${funcName}</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-string">"${escaped}"</span><span class="text-cursor-bracket-1">)</span>;`,
-      }];
+      return [
+        {
+          ln: this.lineNumber++,
+          content: `<span class="text-cursor-variable">${funcName}</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-string">"${escaped}"</span><span class="text-cursor-bracket-1">)</span>;`,
+        },
+      ];
     }
 
     const varName = this.generateContextualVarName(text);
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span>;`,
     });
     lines.push({
       ln: this.lineNumber++,
@@ -574,9 +603,12 @@ export class Codeifier {
   }
 
   private toMethodDefinition(text: string): CodeLineData[] {
-    const methodName = this.generateContextualFuncName(text, '');
+    const methodName = this.generateContextualFuncName(text, "");
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 10);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 10,
+    );
 
     const lines: CodeLineData[] = [];
     lines.push({
@@ -593,7 +625,7 @@ export class Codeifier {
       const varName = this.generateContextualVarName(text);
       lines.push({
         ln: this.lineNumber++,
-        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
+        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span>;`,
       });
       lines.push({
         ln: this.lineNumber++,
@@ -620,7 +652,9 @@ export class Codeifier {
     });
 
     // Use contextual keywords for properties
-    const props = keywords.nouns.slice(0, 3).concat(keywords.allWords.slice(0, 2));
+    const props = keywords.nouns
+      .slice(0, 3)
+      .concat(keywords.allWords.slice(0, 2));
     props.forEach((word, index) => {
       const propName = word.toLowerCase().replace(/[^a-z]/g, "");
       if (propName && propName.length > 2) {
@@ -640,8 +674,11 @@ export class Codeifier {
 
     // Add comment with FULL text to preserve all content
     const escaped = this.escapeString(text);
-    const commentLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 3);
-    commentLines.forEach(line => {
+    const commentLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 3,
+    );
+    commentLines.forEach((line) => {
       lines.push({
         ln: this.lineNumber++,
         content: `<span class="text-cursor-comment">// ${line}</span>`,
@@ -654,7 +691,10 @@ export class Codeifier {
   private toClassDefinition(text: string): CodeLineData[] {
     const className = this.generateContextualTypeName(text);
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 25);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 25,
+    );
     const lines: CodeLineData[] = [];
 
     lines.push({
@@ -668,7 +708,7 @@ export class Codeifier {
     });
 
     // Use smart line breaking for console.log
-    brokenLines.forEach(line => {
+    brokenLines.forEach((line) => {
       lines.push({
         ln: this.lineNumber++,
         content: `    <span class="text-cursor-variable">console</span>.<span class="text-cursor-function">log</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-string">"${line}"</span><span class="text-cursor-bracket-1">)</span>;`,
@@ -691,7 +731,10 @@ export class Codeifier {
   private toAsyncFunction(text: string): CodeLineData[] {
     const funcName = this.generateContextualFuncName(text);
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 10);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 10,
+    );
     const lines: CodeLineData[] = [];
 
     lines.push({
@@ -717,7 +760,7 @@ export class Codeifier {
       const varName = this.generateContextualVarName(text);
       lines.push({
         ln: this.lineNumber++,
-        content: `    <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
+        content: `    <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span>;`,
       });
       lines.push({
         ln: this.lineNumber++,
@@ -752,7 +795,10 @@ export class Codeifier {
     const funcName = this.generateContextualFuncName(text);
     const typeName = this.generateContextualTypeName(text);
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 10);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 10,
+    );
     const lines: CodeLineData[] = [];
 
     lines.push({
@@ -768,7 +814,7 @@ export class Codeifier {
     } else {
       lines.push({
         ln: this.lineNumber++,
-        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">content</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
+        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">content</span> = <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span>;`,
       });
     }
 
@@ -788,19 +834,24 @@ export class Codeifier {
   private toArrowFunction(text: string): CodeLineData[] {
     const funcName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 30);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 30,
+    );
 
     if (brokenLines.length === 1) {
-      return [{
-        ln: this.lineNumber++,
-        content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${funcName}</span> = <span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">input</span>: <span class="text-cursor-type">string</span><span class="text-cursor-bracket-1">)</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${escaped}\`</span>;`,
-      }];
+      return [
+        {
+          ln: this.lineNumber++,
+          content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${funcName}</span> = <span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">input</span>: <span class="text-cursor-type">string</span><span class="text-cursor-bracket-1">)</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${escaped}\`</span>;`,
+        },
+      ];
     }
 
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${funcName}</span> = <span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">input</span>: <span class="text-cursor-type">string</span><span class="text-cursor-bracket-1">)</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${funcName}</span> = <span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">input</span>: <span class="text-cursor-type">string</span><span class="text-cursor-bracket-1">)</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span>;`,
     });
     return lines;
   }
@@ -808,27 +859,35 @@ export class Codeifier {
   private toMapOperation(text: string): CodeLineData[] {
     const varName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 30);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 30,
+    );
 
     if (brokenLines.length === 1) {
-      return [{
-        ln: this.lineNumber++,
-        content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">data</span>.<span class="text-cursor-function">map</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">item</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${escaped}\`</span><span class="text-cursor-bracket-1">)</span>;`,
-      }];
+      return [
+        {
+          ln: this.lineNumber++,
+          content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">data</span>.<span class="text-cursor-function">map</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">item</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${escaped}\`</span><span class="text-cursor-bracket-1">)</span>;`,
+        },
+      ];
     }
 
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">data</span>.<span class="text-cursor-function">map</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">item</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span><span class="text-cursor-bracket-1">)</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">data</span>.<span class="text-cursor-function">map</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">item</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span><span class="text-cursor-bracket-1">)</span>;`,
     });
     return lines;
   }
 
   private toPromiseChain(text: string): CodeLineData[] {
-    const funcName = this.generateContextualFuncName(text, 'process');
+    const funcName = this.generateContextualFuncName(text, "process");
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 20);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 20,
+    );
     const lines: CodeLineData[] = [];
 
     lines.push({
@@ -845,7 +904,7 @@ export class Codeifier {
       const varName = this.generateContextualVarName(text);
       lines.push({
         ln: this.lineNumber++,
-        content: `  .<span class="text-cursor-function">then</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">result</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span><span class="text-cursor-bracket-1">)</span>`,
+        content: `  .<span class="text-cursor-function">then</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-variable">result</span> <span class="text-cursor-operator">=></span> <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span><span class="text-cursor-bracket-1">)</span>`,
       });
     }
 
@@ -869,7 +928,9 @@ export class Codeifier {
     });
 
     // Create enum values from contextual keywords
-    const enumWords = keywords.nouns.slice(0, 3).concat(keywords.allWords.slice(0, 2));
+    const enumWords = keywords.nouns
+      .slice(0, 3)
+      .concat(keywords.allWords.slice(0, 2));
     enumWords.forEach((word, index) => {
       const enumValue = word.toUpperCase().replace(/[^A-Z]/g, "");
       if (enumValue && enumValue.length > 1) {
@@ -891,8 +952,11 @@ export class Codeifier {
       content: ``,
     });
 
-    const commentLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 3);
-    commentLines.forEach(line => {
+    const commentLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 3,
+    );
+    commentLines.forEach((line) => {
       lines.push({
         ln: this.lineNumber++,
         content: `<span class="text-cursor-comment">// ${line}</span>`,
@@ -916,7 +980,10 @@ export class Codeifier {
   private toDecoratorUsage(text: string): CodeLineData[] {
     const className = this.generateContextualTypeName(text);
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 25);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 25,
+    );
     const lines: CodeLineData[] = [];
 
     lines.push({
@@ -934,7 +1001,7 @@ export class Codeifier {
       content: `  <span class="text-cursor-keyword">constructor</span><span class="text-cursor-bracket-1">()</span> <span class="text-cursor-bracket-3">{</span>`,
     });
 
-    brokenLines.forEach(line => {
+    brokenLines.forEach((line) => {
       lines.push({
         ln: this.lineNumber++,
         content: `    <span class="text-cursor-variable">console</span>.<span class="text-cursor-function">log</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-string">'${line}'</span><span class="text-cursor-bracket-1">)</span>;`,
@@ -957,7 +1024,10 @@ export class Codeifier {
   private toFunction(text: string): CodeLineData[] {
     const funcName = this.generateContextualFuncName(text);
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 10);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 10,
+    );
     const lines: CodeLineData[] = [];
 
     lines.push({
@@ -974,7 +1044,7 @@ export class Codeifier {
       const varName = this.generateContextualVarName(text);
       lines.push({
         ln: this.lineNumber++,
-        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
+        content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span>;`,
       });
       lines.push({
         ln: this.lineNumber++,
@@ -991,10 +1061,13 @@ export class Codeifier {
   }
 
   private toHTMLTemplate(text: string): CodeLineData[] {
-    const varName = this.generateContextualVarName(text, 'Template');
+    const varName = this.generateContextualVarName(text, "Template");
     const lines: CodeLineData[] = [];
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 10);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 10,
+    );
 
     lines.push({
       ln: this.lineNumber++,
@@ -1005,7 +1078,7 @@ export class Codeifier {
       content: `  <span class="text-cursor-string">&lt;<span class="text-cursor-class">div</span> <span class="text-cursor-property">className</span>=<span class="text-cursor-string">"content"</span>&gt;</span>`,
     });
 
-    brokenLines.forEach(line => {
+    brokenLines.forEach((line) => {
       lines.push({
         ln: this.lineNumber++,
         content: `    <span class="text-cursor-string">${line}</span>`,
@@ -1026,9 +1099,12 @@ export class Codeifier {
 
   private toInlineComment(text: string): CodeLineData[] {
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 3);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 3,
+    );
 
-    return brokenLines.map(line => ({
+    return brokenLines.map((line) => ({
       ln: this.lineNumber++,
       content: `<span class="text-cursor-comment">// ${line}</span>`,
     }));
@@ -1054,8 +1130,8 @@ export class Codeifier {
   }
 
   private toClassMethod(text: string): CodeLineData[] {
-    const methodName = this.generateContextualFuncName(text, '');
-    const funcName = this.generateContextualFuncName(text, 'process');
+    const methodName = this.generateContextualFuncName(text, "");
+    const funcName = this.generateContextualFuncName(text, "process");
     const lines: CodeLineData[] = [];
     const parts = this.splitBySentences(text, 2);
 
@@ -1066,7 +1142,10 @@ export class Codeifier {
 
     for (const part of parts) {
       const escaped = this.escapeString(part.trim());
-      const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 25);
+      const brokenLines = this.breakLines(
+        escaped,
+        Codeifier.SOFT_LINE_LENGTH - 25,
+      );
       if (brokenLines.length === 1) {
         lines.push({
           ln: this.lineNumber++,
@@ -1076,7 +1155,7 @@ export class Codeifier {
         const varName = this.generateContextualVarName(part);
         lines.push({
           ln: this.lineNumber++,
-          content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">"${brokenLines.join(' ')}"</span>;`,
+          content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">"${brokenLines.join(" ")}"</span>;`,
         });
         lines.push({
           ln: this.lineNumber++,
@@ -1094,7 +1173,7 @@ export class Codeifier {
   }
 
   private toTryCatch(text: string): CodeLineData[] {
-    const funcName = this.generateContextualFuncName(text, 'process');
+    const funcName = this.generateContextualFuncName(text, "process");
     const lines: CodeLineData[] = [];
     const parts = this.splitBySentences(text, 2);
 
@@ -1105,7 +1184,10 @@ export class Codeifier {
 
     for (const part of parts) {
       const escaped = this.escapeString(part.trim());
-      const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 25);
+      const brokenLines = this.breakLines(
+        escaped,
+        Codeifier.SOFT_LINE_LENGTH - 25,
+      );
       if (brokenLines.length === 1) {
         lines.push({
           ln: this.lineNumber++,
@@ -1115,7 +1197,7 @@ export class Codeifier {
         const varName = this.generateContextualVarName(part);
         lines.push({
           ln: this.lineNumber++,
-          content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">"${brokenLines.join(' ')}"</span>;`,
+          content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">"${brokenLines.join(" ")}"</span>;`,
         });
         lines.push({
           ln: this.lineNumber++,
@@ -1141,8 +1223,8 @@ export class Codeifier {
   }
 
   private toForLoop(text: string): CodeLineData[] {
-    const funcName = this.generateContextualFuncName(text, 'process');
-    const varName = this.generateContextualVarName(text, 'Items');
+    const funcName = this.generateContextualFuncName(text, "process");
+    const varName = this.generateContextualVarName(text, "Items");
     const lines: CodeLineData[] = [];
     const parts = this.splitBySentences(text, 2);
 
@@ -1153,7 +1235,10 @@ export class Codeifier {
 
     for (const part of parts) {
       const escaped = this.escapeString(part.trim());
-      const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 25);
+      const brokenLines = this.breakLines(
+        escaped,
+        Codeifier.SOFT_LINE_LENGTH - 25,
+      );
       if (brokenLines.length === 1) {
         lines.push({
           ln: this.lineNumber++,
@@ -1163,7 +1248,7 @@ export class Codeifier {
         const partVarName = this.generateContextualVarName(part);
         lines.push({
           ln: this.lineNumber++,
-          content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${partVarName}</span> = <span class="text-cursor-string">"${brokenLines.join(' ')}"</span>;`,
+          content: `  <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${partVarName}</span> = <span class="text-cursor-string">"${brokenLines.join(" ")}"</span>;`,
         });
         lines.push({
           ln: this.lineNumber++,
@@ -1189,7 +1274,7 @@ export class Codeifier {
 
     // Use smart line breaking
     const brokenLines = this.breakLines(text, Codeifier.SOFT_LINE_LENGTH);
-    brokenLines.forEach(line => {
+    brokenLines.forEach((line) => {
       lines.push({
         ln: this.lineNumber++,
         content: `<span class="text-cursor-comment"> * ${line}</span>`,
@@ -1213,7 +1298,7 @@ export class Codeifier {
     // Add @description tag
     const brokenLines = this.breakLines(text, Codeifier.SOFT_LINE_LENGTH);
     brokenLines.forEach((line, index) => {
-      const prefix = index === 0 ? ' * @description ' : ' * ';
+      const prefix = index === 0 ? " * @description " : " * ";
       lines.push({
         ln: this.lineNumber++,
         content: `<span class="text-cursor-comment">${prefix}${line}</span>`,
@@ -1230,19 +1315,24 @@ export class Codeifier {
   private toConsoleLog(text: string): CodeLineData[] {
     const varName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 20);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 20,
+    );
 
     if (brokenLines.length === 1) {
-      return [{
-        ln: this.lineNumber++,
-        content: `<span class="text-cursor-variable">console</span>.<span class="text-cursor-function">log</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-string">"${escaped}"</span><span class="text-cursor-bracket-1">)</span>;`,
-      }];
+      return [
+        {
+          ln: this.lineNumber++,
+          content: `<span class="text-cursor-variable">console</span>.<span class="text-cursor-function">log</span><span class="text-cursor-bracket-1">(</span><span class="text-cursor-string">"${escaped}"</span><span class="text-cursor-bracket-1">)</span>;`,
+        },
+      ];
     }
 
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span>;`,
     });
     lines.push({
       ln: this.lineNumber++,
@@ -1254,41 +1344,50 @@ export class Codeifier {
   private toConstStatement(text: string): CodeLineData[] {
     const varName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 20);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 20,
+    );
 
     if (brokenLines.length === 1) {
-      return [{
-        ln: this.lineNumber++,
-        content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">"${escaped}"</span>;`,
-      }];
+      return [
+        {
+          ln: this.lineNumber++,
+          content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">"${escaped}"</span>;`,
+        },
+      ];
     }
 
     const lines: CodeLineData[] = [];
     lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(' ')}\`</span>;`,
+      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-string">\`${brokenLines.join(" ")}\`</span>;`,
     });
     return lines;
   }
 
   private toImportStatement(text: string): CodeLineData[] {
     const moduleName = this.generateContextualFuncName(text).toLowerCase();
-    const importName = this.generateContextualFuncName(text, '');
+    const importName = this.generateContextualFuncName(text, "");
 
-    return [{
-      ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">import</span> <span class="text-cursor-bracket-3">{</span> <span class="text-cursor-variable">${importName}</span> <span class="text-cursor-bracket-3">}</span> <span class="text-cursor-keyword">from</span> <span class="text-cursor-string">'./${moduleName}'</span>;`,
-    }];
+    return [
+      {
+        ln: this.lineNumber++,
+        content: `<span class="text-cursor-keyword">import</span> <span class="text-cursor-bracket-3">{</span> <span class="text-cursor-variable">${importName}</span> <span class="text-cursor-bracket-3">}</span> <span class="text-cursor-keyword">from</span> <span class="text-cursor-string">'./${moduleName}'</span>;`,
+      },
+    ];
   }
 
   private toExportStatement(text: string): CodeLineData[] {
-    const exportName = this.generateContextualFuncName(text, '');
+    const exportName = this.generateContextualFuncName(text, "");
     const escaped = this.escapeString(text);
 
-    return [{
-      ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">export</span> <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${exportName}</span> = <span class="text-cursor-string">"${escaped}"</span>;`,
-    }];
+    return [
+      {
+        ln: this.lineNumber++,
+        content: `<span class="text-cursor-keyword">export</span> <span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${exportName}</span> = <span class="text-cursor-string">"${escaped}"</span>;`,
+      },
+    ];
   }
 
   private toTypeDefinition(text: string): CodeLineData[] {
@@ -1335,7 +1434,7 @@ export class Codeifier {
   }
 
   private toMappedType(text: string): CodeLineData[] {
-    const typeName = this.generateContextualTypeName(text, 'Keys');
+    const typeName = this.generateContextualTypeName(text, "Keys");
     const baseName = this.generateContextualTypeName(text);
     const escaped = this.escapeString(text);
     const lines: CodeLineData[] = [];
@@ -1361,13 +1460,27 @@ export class Codeifier {
   }
 
   private toTemplateLiteralType(text: string): CodeLineData[] {
-    const typeName = this.generateContextualTypeName(text, 'Id');
+    const typeName = this.generateContextualTypeName(text, "Id");
     const escaped = this.escapeString(text);
+    const commentLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 3,
+    );
+    const lines: CodeLineData[] = [];
 
-    return [{
+    lines.push({
       ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">type</span> <span class="text-cursor-type">${typeName}</span> = <span class="text-cursor-string">\`scene_${escaped.slice(0, 20).replace(/\s+/g, '_')}\`</span>;`,
-    }];
+      content: `<span class="text-cursor-keyword">type</span> <span class="text-cursor-type">${typeName}</span> = <span class="text-cursor-string">\`scene_${typeName.toLowerCase()}\`</span>;`,
+    });
+
+    commentLines.forEach((line) => {
+      lines.push({
+        ln: this.lineNumber++,
+        content: `<span class="text-cursor-comment">// ${line}</span>`,
+      });
+    });
+
+    return lines;
   }
 
   private toNamespace(text: string): CodeLineData[] {
@@ -1418,7 +1531,10 @@ export class Codeifier {
 
   private toArrayChain(text: string): CodeLineData[] {
     const escaped = this.escapeString(text);
-    const brokenLines = this.breakLines(escaped, Codeifier.SOFT_LINE_LENGTH - 30);
+    const brokenLines = this.breakLines(
+      escaped,
+      Codeifier.SOFT_LINE_LENGTH - 30,
+    );
 
     const lines: CodeLineData[] = [];
     lines.push({
@@ -1445,20 +1561,24 @@ export class Codeifier {
     const varName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
 
-    return [{
-      ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">scene</span>?.<span class="text-cursor-property">content</span>?.<span class="text-cursor-property">text</span> ?? <span class="text-cursor-string">"${escaped}"</span>;`,
-    }];
+    return [
+      {
+        ln: this.lineNumber++,
+        content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">scene</span>?.<span class="text-cursor-property">content</span>?.<span class="text-cursor-property">text</span> ?? <span class="text-cursor-string">"${escaped}"</span>;`,
+      },
+    ];
   }
 
   private toNullishCoalescing(text: string): CodeLineData[] {
     const varName = this.generateContextualVarName(text);
     const escaped = this.escapeString(text);
 
-    return [{
-      ln: this.lineNumber++,
-      content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">chapter</span>.<span class="text-cursor-property">title</span> ?? <span class="text-cursor-string">"${escaped}"</span>;`,
-    }];
+    return [
+      {
+        ln: this.lineNumber++,
+        content: `<span class="text-cursor-keyword">const</span> <span class="text-cursor-variable">${varName}</span> = <span class="text-cursor-variable">chapter</span>.<span class="text-cursor-property">title</span> ?? <span class="text-cursor-string">"${escaped}"</span>;`,
+      },
+    ];
   }
 
   private generateVarName(text: string): string {
@@ -1487,7 +1607,7 @@ export class Codeifier {
       .map((w, i) =>
         i === 0
           ? w.toLowerCase()
-          : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+          : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(),
       )
       .join("");
   }
@@ -1541,7 +1661,7 @@ export class Codeifier {
       .map((w, i) =>
         i === 0
           ? w.toLowerCase()
-          : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+          : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(),
       )
       .join("");
 
@@ -1593,23 +1713,27 @@ export class Codeifier {
   } {
     const words = text
       .toLowerCase()
-      .replace(/[^\w\s]/g, ' ')
+      .replace(/[^\w\s]/g, " ")
       .split(/\s+/)
-      .filter(w => w.length > 2);
+      .filter((w) => w.length > 2);
 
     const nouns: string[] = [];
     const verbs: string[] = [];
     const properNouns: string[] = [];
 
     // Common Portuguese verbs (infinitive form)
-    const verbPatterns = /\b(ser|estar|ter|fazer|dizer|ir|ver|saber|querer|poder|dar|vir|passar|ficar|deixar|começar|acabar|voltar|encontrar|pensar|olhar|ouvir|falar|trabalhar|viver|morrer|nascer|chegar|sair|entrar|subir|descer|abrir|fechar|pegar|largar|correr|andar|caminhar|sentar|levantar|dormir|acordar|comer|beber|escrever|ler|aprender|ensinar|ajudar|precisar|gostar|amar|odiar|esquecer|lembrar|conhecer|encontrar|perder|ganhar|comprar|vender|pagar|receber|esperar|chegar|partir|voltar|continuar|parar|começar|terminar|acabar|ficar|deixar|permitir|proibir|obrigar|forçar|conseguir|tentar|provar|testar|mostrar|esconder|procurar|achar|encontrar|perder|ganhar|vencer|perder|jogar|brincar|rir|chorar|sorrir|chorar|gritar|falar|calar|ouvir|escutar|ver|olhar|observar|notar|perceber|sentir|tocar|pegar|largar|segurar|soltar|empurrar|puxar|levantar|abaixar|subir|descer|entrar|sair|chegar|partir|voltar|ir|vir|ficar|permanecer|continuar|parar|começar|terminar|acabar)\b/i;
+    const verbPatterns =
+      /\b(ser|estar|ter|fazer|dizer|ir|ver|saber|querer|poder|dar|vir|passar|ficar|deixar|começar|acabar|voltar|encontrar|pensar|olhar|ouvir|falar|trabalhar|viver|morrer|nascer|chegar|sair|entrar|subir|descer|abrir|fechar|pegar|largar|correr|andar|caminhar|sentar|levantar|dormir|acordar|comer|beber|escrever|ler|aprender|ensinar|ajudar|precisar|gostar|amar|odiar|esquecer|lembrar|conhecer|encontrar|perder|ganhar|comprar|vender|pagar|receber|esperar|chegar|partir|voltar|continuar|parar|começar|terminar|acabar|ficar|deixar|permitir|proibir|obrigar|forçar|conseguir|tentar|provar|testar|mostrar|esconder|procurar|achar|encontrar|perder|ganhar|vencer|perder|jogar|brincar|rir|chorar|sorrir|chorar|gritar|falar|calar|ouvir|escutar|ver|olhar|observar|notar|perceber|sentir|tocar|pegar|largar|segurar|soltar|empurrar|puxar|levantar|abaixar|subir|descer|entrar|sair|chegar|partir|voltar|ir|vir|ficar|permanecer|continuar|parar|começar|terminar|acabar)\b/i;
 
     // Common Portuguese nouns
-    const nounPatterns = /\b(sol|lua|estrela|mar|rio|montanha|vila|cidade|rua|casa|porta|janela|mesa|cadeira|livro|papel|caneta|lápis|gente|pessoa|homem|mulher|criança|velho|jovem|amigo|inimigo|família|mãe|pai|filho|filha|irmão|irmã|avô|avó|tio|tia|primo|prima|vizinho|vizinha|professor|professora|aluno|aluna|médico|médica|enfermeiro|enfermeira|advogado|advogada|engenheiro|engenheira|arquiteto|arquiteta|artista|músico|música|pintor|pintora|escritor|escritora|poeta|poetisa|ator|atriz|diretor|diretora|chef|cozinheiro|cozinheira|garçom|garçonete|vendedor|vendedora|comprador|compradora|cliente|fornecedor|fornecedora|empregado|empregada|patrão|patroa|chefe|funcionário|funcionária|trabalhador|trabalhadora|operário|operária|mecânico|mecânica|eletricista|carpinteiro|carpinteira|pedreiro|pedreira|pintor|pintora|jardineiro|jardineira|faxineiro|faxineira|segurança|porteiro|porteira|recepcionista|secretário|secretária|assistente|gerente|supervisor|supervisora|diretor|diretora|presidente|vice-presidente|ministro|ministra|governador|governadora|prefeito|prefeita|vereador|vereadora|deputado|deputada|senador|senadora|juiz|juíza|promotor|promotora|delegado|delegada|policial|bombeiro|bombeira|soldado|sargento|capitão|major|coronel|general|almirante|comandante|tenente|subtenente|cabo|soldado|recruta|veterano|veterana|guerreiro|guerreira|herói|heroína|vilão|vilã|príncipe|princesa|rei|rainha|imperador|imperatriz|nobre|nobreza|plebeu|plebeia|escravo|escrava|servo|serva|criado|criada|mordomo|mordoma|aia|dama|donzela|cavaleiro|dama|senhor|senhora|senhorita|moço|moça|rapaz|garota|menino|menina|bebê|recém-nascido|recém-nascida|criança|adolescente|jovem|adulto|adulta|idoso|idosa|velho|velha|ancião|anciã|morto|morta|vivo|viva|nascido|nascida|casado|casada|solteiro|solteira|divorciado|divorciada|viúvo|viúva|noivo|noiva|esposo|esposa|marido|mulher|namorado|namorada|amante|amigo|amiga|inimigo|inimiga|rival|concorrente|competidor|competidora|aliado|aliada|parceiro|parceira|sócio|sócia|colaborador|colaboradora|colegas|companheiro|companheira|camarada|colega|vizinho|vizinha|morador|moradora|habitante|residente|hóspede|visitante|turista|viajante|passageiro|passageira|motorista|condutor|condutora|piloto|copiloto|navegador|navegadora|guia|turista|explorador|exploradora|aventureiro|aventureira|desbravador|desbravadora|pioneiro|pioneira|colonizador|colonizadora|conquistador|conquistadora|invasor|invasora|defensor|defensora|protetor|protetora|guardião|guardiã|vigia|sentinela|vigilante|observador|observadora|espectador|espectadora|ouvinte|testemunha|vítima|sobrevivente|refugiado|refugiada|imigrante|emigrante|nativo|nativa|estrangeiro|estrangeira|turista|viajante|explorador|exploradora|aventureiro|aventureira|desbravador|desbravadora|pioneiro|pioneira|colonizador|colonizadora|conquistador|conquistadora|invasor|invasora|defensor|defensora|protetor|protetora|guardião|guardiã|vigia|sentinela|vigilante|observador|observadora|espectador|espectadora|ouvinte|testemunha|vítima|sobrevivente|refugiado|refugiada|imigrante|emigrante|nativo|nativa|estrangeiro|estrangeira)\b/i;
+    const nounPatterns =
+      /\b(sol|lua|estrela|mar|rio|montanha|vila|cidade|rua|casa|porta|janela|mesa|cadeira|livro|papel|caneta|lápis|gente|pessoa|homem|mulher|criança|velho|jovem|amigo|inimigo|família|mãe|pai|filho|filha|irmão|irmã|avô|avó|tio|tia|primo|prima|vizinho|vizinha|professor|professora|aluno|aluna|médico|médica|enfermeiro|enfermeira|advogado|advogada|engenheiro|engenheira|arquiteto|arquiteta|artista|músico|música|pintor|pintora|escritor|escritora|poeta|poetisa|ator|atriz|diretor|diretora|chef|cozinheiro|cozinheira|garçom|garçonete|vendedor|vendedora|comprador|compradora|cliente|fornecedor|fornecedora|empregado|empregada|patrão|patroa|chefe|funcionário|funcionária|trabalhador|trabalhadora|operário|operária|mecânico|mecânica|eletricista|carpinteiro|carpinteira|pedreiro|pedreira|pintor|pintora|jardineiro|jardineira|faxineiro|faxineira|segurança|porteiro|porteira|recepcionista|secretário|secretária|assistente|gerente|supervisor|supervisora|diretor|diretora|presidente|vice-presidente|ministro|ministra|governador|governadora|prefeito|prefeita|vereador|vereadora|deputado|deputada|senador|senadora|juiz|juíza|promotor|promotora|delegado|delegada|policial|bombeiro|bombeira|soldado|sargento|capitão|major|coronel|general|almirante|comandante|tenente|subtenente|cabo|soldado|recruta|veterano|veterana|guerreiro|guerreira|herói|heroína|vilão|vilã|príncipe|princesa|rei|rainha|imperador|imperatriz|nobre|nobreza|plebeu|plebeia|escravo|escrava|servo|serva|criado|criada|mordomo|mordoma|aia|dama|donzela|cavaleiro|dama|senhor|senhora|senhorita|moço|moça|rapaz|garota|menino|menina|bebê|recém-nascido|recém-nascida|criança|adolescente|jovem|adulto|adulta|idoso|idosa|velho|velha|ancião|anciã|morto|morta|vivo|viva|nascido|nascida|casado|casada|solteiro|solteira|divorciado|divorciada|viúvo|viúva|noivo|noiva|esposo|esposa|marido|mulher|namorado|namorada|amante|amigo|amiga|inimigo|inimiga|rival|concorrente|competidor|competidora|aliado|aliada|parceiro|parceira|sócio|sócia|colaborador|colaboradora|colegas|companheiro|companheira|camarada|colega|vizinho|vizinha|morador|moradora|habitante|residente|hóspede|visitante|turista|viajante|passageiro|passageira|motorista|condutor|condutora|piloto|copiloto|navegador|navegadora|guia|turista|explorador|exploradora|aventureiro|aventureira|desbravador|desbravadora|pioneiro|pioneira|colonizador|colonizadora|conquistador|conquistadora|invasor|invasora|defensor|defensora|protetor|protetora|guardião|guardiã|vigia|sentinela|vigilante|observador|observadora|espectador|espectadora|ouvinte|testemunha|vítima|sobrevivente|refugiado|refugiada|imigrante|emigrante|nativo|nativa|estrangeiro|estrangeira|turista|viajante|explorador|exploradora|aventureiro|aventureira|desbravador|desbravadora|pioneiro|pioneira|colonizador|colonizadora|conquistador|conquistadora|invasor|invasora|defensor|defensora|protetor|protetora|guardião|guardiã|vigia|sentinela|vigilante|observador|observadora|espectador|espectadora|ouvinte|testemunha|vítima|sobrevivente|refugiado|refugiada|imigrante|emigrante|nativo|nativa|estrangeiro|estrangeira)\b/i;
 
     words.forEach((word, index) => {
       // Check if word starts with capital (likely proper noun)
-      const originalWord = text.split(/\s+/).find(w => w.toLowerCase() === word);
+      const originalWord = text
+        .split(/\s+/)
+        .find((w) => w.toLowerCase() === word);
       if (originalWord && /^[A-ZÁÉÍÓÚÂÊÔÇ]/.test(originalWord)) {
         properNouns.push(word);
       } else if (verbPatterns.test(word)) {
@@ -1623,18 +1747,22 @@ export class Codeifier {
       nouns: [...new Set(nouns)].slice(0, 5),
       verbs: [...new Set(verbs)].slice(0, 5),
       properNouns: [...new Set(properNouns)].slice(0, 3),
-      allWords: words.slice(0, 10)
+      allWords: words.slice(0, 10),
     };
   }
 
   /**
    * Generate contextual variable name from text
    */
-  private generateContextualVarName(text: string, suffix: string = ''): string {
+  private generateContextualVarName(text: string, suffix: string = ""): string {
     const keywords = this.extractKeywords(text);
 
     // Prefer proper nouns, then nouns, then verbs
-    const preferredWord = keywords.properNouns[0] || keywords.nouns[0] || keywords.verbs[0] || keywords.allWords[0];
+    const preferredWord =
+      keywords.properNouns[0] ||
+      keywords.nouns[0] ||
+      keywords.verbs[0] ||
+      keywords.allWords[0];
 
     if (!preferredWord) {
       return `content${suffix}`;
@@ -1643,8 +1771,8 @@ export class Codeifier {
     // Convert to camelCase
     const camelCase = preferredWord
       .split(/\s+/)
-      .map((w, i) => i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1))
-      .join('');
+      .map((w, i) => (i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+      .join("");
 
     return camelCase + suffix;
   }
@@ -1652,12 +1780,18 @@ export class Codeifier {
   /**
    * Generate contextual function name from text
    */
-  private generateContextualFuncName(text: string, prefix: string = ''): string {
+  private generateContextualFuncName(
+    text: string,
+    prefix: string = "",
+  ): string {
     const keywords = this.extractKeywords(text);
-    const prefixes = prefix ? [prefix] : ['handle', 'process', 'render', 'format', 'create', 'get', 'set'];
+    const prefixes = prefix
+      ? [prefix]
+      : ["handle", "process", "render", "format", "create", "get", "set"];
     const prefixChoice = prefixes[Math.floor(Math.random() * prefixes.length)];
 
-    const preferredWord = keywords.verbs[0] || keywords.nouns[0] || keywords.allWords[0];
+    const preferredWord =
+      keywords.verbs[0] || keywords.nouns[0] || keywords.allWords[0];
 
     if (!preferredWord) {
       return `${prefixChoice}Content`;
@@ -1665,8 +1799,8 @@ export class Codeifier {
 
     const camelCase = preferredWord
       .split(/\s+/)
-      .map((w, i) => i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1))
-      .join('');
+      .map((w, i) => (i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1)))
+      .join("");
 
     return `${prefixChoice}${camelCase.charAt(0).toUpperCase()}${camelCase.slice(1)}`;
   }
@@ -1674,9 +1808,13 @@ export class Codeifier {
   /**
    * Generate contextual type name from text
    */
-  private generateContextualTypeName(text: string, suffix: string = ''): string {
+  private generateContextualTypeName(
+    text: string,
+    suffix: string = "",
+  ): string {
     const keywords = this.extractKeywords(text);
-    const preferredWord = keywords.nouns[0] || keywords.properNouns[0] || keywords.allWords[0];
+    const preferredWord =
+      keywords.nouns[0] || keywords.properNouns[0] || keywords.allWords[0];
 
     if (!preferredWord) {
       return `Content${suffix}`;
@@ -1684,8 +1822,8 @@ export class Codeifier {
 
     const pascalCase = preferredWord
       .split(/\s+/)
-      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-      .join('');
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join("");
 
     return pascalCase + suffix;
   }
@@ -1693,40 +1831,76 @@ export class Codeifier {
   /**
    * Select structure avoiding recent repetition
    */
-  private selectStructure(textLength: number, textType: 'dialogue' | 'list' | 'question' | 'narrative'): StructureType {
+  private selectStructure(
+    textLength: number,
+    textType: "dialogue" | "list" | "question" | "narrative",
+  ): StructureType {
     const availableStructures: StructureType[] = [];
 
     // Determine available structures based on context
     if (textLength < 50) {
-      availableStructures.push('inline-comment', 'const', 'console-log', 'arrow-function');
+      availableStructures.push(
+        "inline-comment",
+        "const",
+        "console-log",
+        "arrow-function",
+      );
     } else if (textLength < 100) {
-      availableStructures.push('function', 'arrow-function', 'const', 'comment', 'jsdoc', 'console-log', 'destructuring');
+      availableStructures.push(
+        "function",
+        "arrow-function",
+        "const",
+        "comment",
+        "jsdoc",
+        "console-log",
+        "destructuring",
+      );
     } else if (textLength < 200) {
       availableStructures.push(
-        'function', 'async-function', 'arrow-function', 'method', 'jsdoc', 'comment',
-        'type-definition', 'interface', 'array-chain', 'optional-chaining'
+        "function",
+        "async-function",
+        "arrow-function",
+        "method",
+        "jsdoc",
+        "comment",
+        "type-definition",
+        "interface",
+        "array-chain",
+        "optional-chaining",
       );
     } else {
       availableStructures.push(
-        'async-function', 'function', 'jsdoc', 'comment', 'class', 'interface',
-        'type-definition', 'namespace', 'generic-function', 'type-guard'
+        "async-function",
+        "function",
+        "jsdoc",
+        "comment",
+        "class",
+        "interface",
+        "type-definition",
+        "namespace",
+        "generic-function",
+        "type-guard",
       );
     }
 
     // Add variety structures
     if (this.structureCount > 5 && !this.hasImports) {
-      availableStructures.push('import');
+      availableStructures.push("import");
     }
     if (this.structureCount > 10 && Math.random() < 0.3) {
-      availableStructures.push('type-definition', 'mapped-type', 'template-literal-type');
+      availableStructures.push(
+        "type-definition",
+        "mapped-type",
+        "template-literal-type",
+      );
     }
     if (this.structureCount > 15 && Math.random() < 0.2) {
-      availableStructures.push('export');
+      availableStructures.push("export");
     }
 
     // Filter out recently used structures (last 3-5)
     const recent = this.recentStructures.slice(-5);
-    const filtered = availableStructures.filter(s => !recent.includes(s));
+    const filtered = availableStructures.filter((s) => !recent.includes(s));
     const candidates = filtered.length > 0 ? filtered : availableStructures;
 
     // Select randomly from candidates
@@ -1740,8 +1914,8 @@ export class Codeifier {
     this.structureCount++;
 
     // Update file section tracking
-    if (selected === 'import') this.hasImports = true;
-    if (selected === 'export') this.hasExports = true;
+    if (selected === "import") this.hasImports = true;
+    if (selected === "export") this.hasExports = true;
 
     return selected;
   }
@@ -1749,7 +1923,10 @@ export class Codeifier {
   /**
    * Smart line breaking respecting sentence boundaries
    */
-  private breakLines(text: string, maxLength: number = Codeifier.MAX_LINE_LENGTH): string[] {
+  private breakLines(
+    text: string,
+    maxLength: number = Codeifier.MAX_LINE_LENGTH,
+  ): string[] {
     if (text.length <= maxLength) return [text];
 
     const lines: string[] = [];
@@ -1765,17 +1942,19 @@ export class Codeifier {
       let breakPoint = maxLength;
 
       // Prefer sentence endings
-      const sentenceEnd = remaining.substring(0, maxLength).lastIndexOf(/[.!?]\s/.source);
+      const sentenceEnd = remaining
+        .substring(0, maxLength)
+        .lastIndexOf(/[.!?]\s/.source);
       if (sentenceEnd > maxLength * 0.6) {
         breakPoint = sentenceEnd + 2; // Include punctuation and space
       } else {
         // Prefer commas
-        const comma = remaining.substring(0, maxLength).lastIndexOf(', ');
+        const comma = remaining.substring(0, maxLength).lastIndexOf(", ");
         if (comma > maxLength * 0.7) {
           breakPoint = comma + 1;
         } else {
           // Break at word boundary
-          const space = remaining.substring(0, maxLength).lastIndexOf(' ');
+          const space = remaining.substring(0, maxLength).lastIndexOf(" ");
           if (space > maxLength * 0.8) {
             breakPoint = space;
           }
